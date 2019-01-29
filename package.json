@@ -1,0 +1,12 @@
+{
+  "name": "sendgrid-mock",
+  "version": "1.0.0-SNAPSHOT",
+  "description": "SendGrid API mock",
+  "scripts": {
+    "dev": "set API_KEY=dance&& node ./src/app.js"
+  },
+  "author": "janjaali",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
+}

@@ -1,0 +1,22 @@
+POST http://localhost:3000/v3/mail/send
+Authorization: Bearer dance
+
+{
+    "personalizations": [
+        {
+            "to": {
+                "email": "to@invalid"
+            }
+        }
+    ],
+    "from": {
+        "email": "from@invalid"
+    },
+    "subject": "important subject",
+    "content": [
+        {
+            "type": "test/plain",
+            "value": "even more important content"
+        }
+    ]
+}
