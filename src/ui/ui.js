@@ -1,7 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import Mails from './mails/Mails';
+
 ReactDOM.render(
-    <h1>Hello, world!</h1>,
+    <Mails />,
     document.getElementById('root')
 );

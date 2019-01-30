@@ -11,12 +11,6 @@ app.use(bodyParser.json());
 
 let mails = [];
 
-app.use(express.static(path.join(__dirname, "../../dist")));
-
-app.get("/", function (req, res) {
-    res.sendFile(path.join(__dirname, "../../dist", "index.html"));
-});
-
 app.post('/v3/mail/send', (req, res) => {
     const reqApiKey = req.headers.authorization;
     if (reqApiKey === `Bearer ${process.env.API_KEY}`) {
@@ -36,7 +30,15 @@ app.post('/v3/mail/send', (req, res) => {
 });
 
 app.get('/mails', (req, res) => {
+    console.log('cherraaaa!');
     res.send(mails);
+});
+
+app.use(express.static(path.join(__dirname, "../../dist")));
+
+app.get("/", function (req, res) {
+    console.log('hier');
+    res.sendFile(path.join(__dirname, "../../dist", "index.html"));
 });
 
 const port = 3000;
