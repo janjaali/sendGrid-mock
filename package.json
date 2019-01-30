@@ -3,16 +3,21 @@
   "version": "1.0.0-SNAPSHOT",
   "description": "SendGrid API mock",
   "scripts": {
-    "dev": "set API_KEY=dance&& node ./src/app.js",
-    "lint": "eslint src"
+    "dev": "set API_KEY=dance&& node ./src/api/app.js",
+    "ui-dev": "parcel ./src/ui/index.html",
+    "lint": "eslint src",
+    "build": "parcel build ./src/ui/index.html"
   },
   "author": "janjaali",
   "dependencies": {
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
-    "log4js": "^4.0.1"
+    "log4js": "^4.0.1",
+    "react": "^16.7.0",
+    "react-dom": "^16.7.0"
   },
   "devDependencies": {
-    "eslint": "^5.12.1"
+    "eslint": "^5.12.1",
+    "parcel-bundler": "^1.11.0"
   }
 }
