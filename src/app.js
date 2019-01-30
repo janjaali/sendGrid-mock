@@ -27,5 +27,9 @@ app.post('/v3/mail/send', (req, res) => {
     }
 });
 
+app.get('/mails', (req, res) => {
+    res.send(mails);
+})
+
 const port = 3000;
 app.listen(port, () => logger.info(`Start service on port ${port}!`));
