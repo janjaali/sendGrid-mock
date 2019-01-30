@@ -13,7 +13,8 @@ let mails = [];
 app.post('/v3/mail/send', (req, res) => {
     const reqApiKey = req.headers.authorization;
     if (reqApiKey === `Bearer ${process.env.API_KEY}`) {
-        mails = [...mails, req.body];
+        const mailWithTimestamp = { ...req.body, datetime: new Date() };
+        mails = [...mails, mailWithTimestamp];
         res.sendStatus(202);
     } else {
         res.status(403).send({
