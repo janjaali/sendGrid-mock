@@ -1,5 +1,6 @@
 POST http://localhost:3000/v3/mail/send
 Authorization: Bearer dance
+Content-Type: application/json
 
 {
     "personalizations": [

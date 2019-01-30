@@ -1,12 +1,20 @@
+const log4js = require('log4js');
 const express = require('express');
+const bodyParser = require('body-parser');
+
+let logger = log4js.getLogger('sendgrid-mock');
+logger.level = 'debug';
 
 const app = express();
-const port = 3000;
+app.use(bodyParser.json());
+
+let mails = [];
 
 app.post('/v3/mail/send', (req, res) => {
     const reqApiKey = req.headers.authorization;
     if (reqApiKey === `Bearer ${process.env.API_KEY}`) {
-        res.send('Hello World!');
+        mails = [...mails, req.body];
+        res.sendStatus(202);
     } else {
         res.status(403).send({
             errors: [{
@@ -19,4 +27,5 @@ app.post('/v3/mail/send', (req, res) => {
     }
 });
 
-app.listen(port, () => console.log(`Start service on port ${port}!`));
+const port = 3000;
+app.listen(port, () => logger.info(`Start service on port ${port}!`));

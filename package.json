@@ -3,10 +3,16 @@
   "version": "1.0.0-SNAPSHOT",
   "description": "SendGrid API mock",
   "scripts": {
-    "dev": "set API_KEY=dance&& node ./src/app.js"
+    "dev": "set API_KEY=dance&& node ./src/app.js",
+    "lint": "eslint src"
   },
   "author": "janjaali",
   "dependencies": {
-    "express": "^4.16.4"
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "log4js": "^4.0.1"
+  },
+  "devDependencies": {
+    "eslint": "^5.12.1"
   }
 }
