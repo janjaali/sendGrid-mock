@@ -6,17 +6,17 @@ Content-Type: application/json
     "personalizations": [
         {
             "to": {
-                "email": "to@invalid"
+                "email": "to@example.com"
             }
         }
     ],
     "from": {
-        "email": "from@invalid"
+        "email": "from@example.com"
     },
     "subject": "important subject",
     "content": [
         {
-            "type": "test/plain",
+            "type": "text/plain",
             "value": "even more important content"
         }
     ]

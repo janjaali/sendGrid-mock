@@ -15,7 +15,8 @@
     "express": "^4.16.4",
     "log4js": "^4.0.1",
     "react": "^16.7.0",
-    "react-dom": "^16.7.0"
+    "react-dom": "^16.7.0",
+    "react-table": "^6.9.0"
   },
   "devDependencies": {
     "concurrently": "^4.1.0",
