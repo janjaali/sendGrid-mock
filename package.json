@@ -3,8 +3,9 @@
   "version": "1.0.0-SNAPSHOT",
   "description": "SendGrid API mock",
   "scripts": {
-    "dev": "set API_KEY=dance&& node ./src/api/app.js",
+    "server-dev": "set API_KEY=dance&& node ./src/api/app.js",
     "ui-dev": "node ./scripts/ui-dev.js",
+    "dev": "concurrently \"npm run server-dev\" \"npm run ui-dev\"",
     "lint": "eslint src",
     "build": "parcel build ./src/ui/index.html"
   },
@@ -17,6 +18,7 @@
     "react-dom": "^16.7.0"
   },
   "devDependencies": {
+    "concurrently": "^4.1.0",
     "eslint": "^5.12.1",
     "express-http-proxy": "^1.5.1",
     "parcel-bundler": "^1.11.0"
