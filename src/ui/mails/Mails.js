@@ -1,12 +1,8 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 
 class Mails extends React.Component {
     componentDidMount() {
-        fetch('/api/mails')
-            .then(response => {
-                console.log(response);
-            });
+        fetch('/api/mails');
     }
 
     render() {

@@ -6,6 +6,8 @@ extends: 'eslint:recommended'
 parserOptions:
   ecmaVersion: 2018
   sourceType: module
+  ecmaFeatures:
+    jsx: true
 rules:
   indent:
     - error
@@ -19,3 +21,7 @@ rules:
   semi:
     - error
     - always
+  react/jsx-uses-react: error
+  react/jsx-uses-vars: error
+plugins:
+  - react
