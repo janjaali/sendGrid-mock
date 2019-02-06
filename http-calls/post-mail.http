@@ -1,5 +1,5 @@
 POST http://localhost:3000/v3/mail/send
-Authorization: Bearer dance
+Authorization: Bearer sendgrid-api-key
 Content-Type: application/json
 
 {

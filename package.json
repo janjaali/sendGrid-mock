@@ -3,7 +3,7 @@
   "version": "1.0.0-SNAPSHOT",
   "description": "SendGrid API mock",
   "scripts": {
-    "server-dev": "set API_KEY=dance&& node ./src/api/app.js",
+    "server-dev": "set API_KEY=sendgrid-api-key&& node ./src/api/app.js",
     "ui-dev": "node ./scripts/ui-dev.js",
     "dev": "concurrently \"npm run server-dev\" \"npm run ui-dev\"",
     "lint": "eslint src",
