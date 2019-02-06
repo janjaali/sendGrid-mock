@@ -1,5 +1,5 @@
-FROM node:10.15
-LABEL author="Siyavash Habashi (janjaali)"
+FROM node:10.15-slim
+LABEL author="Siyavash Habashi (ghashange)"
 
 ENV API_KEY=sendgrid-api-key
 

@@ -1,6 +1,6 @@
 {
   "name": "sendgrid-mock",
-  "version": "1.0.0-SNAPSHOT",
+  "version": "1.0.0",
   "description": "SendGrid API mock",
   "scripts": {
     "server-dev": "set API_KEY=sendgrid-api-key&& node ./src/api/app.js",
