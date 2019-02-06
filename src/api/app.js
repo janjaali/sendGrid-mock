@@ -29,7 +29,7 @@ app.post('/v3/mail/send', (req, res) => {
     }
 });
 
-app.get('/mails', (req, res) => {
+app.get('/api/mails', (req, res) => {
     res.send(mails);
 });
 
