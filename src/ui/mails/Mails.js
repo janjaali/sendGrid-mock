@@ -8,8 +8,20 @@ class Mails extends React.Component {
         this.state = {
             mails: [],
         };
+
+        this.refresh = this.refresh.bind(this);
+        this._fetchMails = this._fetchMails.bind(this);
     }
+
     componentDidMount() {
+        this._fetchMails();
+    }
+
+    refresh() {
+        this._fetchMails();
+    }
+
+    _fetchMails() {
         fetch('/api/mails')
             .then(data => (data.json()))
             .then(mails => {
@@ -21,7 +33,12 @@ class Mails extends React.Component {
         const data = this.state.mails;
 
         return <div>
+            <div style={{ textAlign: 'right' }}>
+                <a href='#' onClick={this.refresh}>Refresh</a>
+            </div>
+
             <ReactTable
+                style={{ marginTop: '12px' }}
                 data={data}
                 columns={[{
                     Header: 'Mails',
