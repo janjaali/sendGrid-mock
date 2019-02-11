@@ -56,6 +56,7 @@ class Mails extends React.Component {
                         {
                             Header: 'subject',
                             id: 'subject',
+                            style: { 'whiteSpace': 'unset' },
                             accessor: mail => mail.subject
                         },
                         {
@@ -69,6 +70,7 @@ class Mails extends React.Component {
                         {
                             Header: 'content',
                             id: 'content',
+                            style: { 'whiteSpace': 'unset' },
                             accessor: mail => mail.content,
                             Cell: cellData => (cellData.value.map((value, index) => {
                                 return (
