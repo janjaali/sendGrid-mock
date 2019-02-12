@@ -63,9 +63,16 @@ class Mails extends React.Component {
                             Header: 'to',
                             id: 'to',
                             accessor: mail => mail.personalizations,
-                            Cell: cellData => (cellData.value.map((value, index) => {
-                                return (<span key={index}>{value.to.email}</span>);
-                            }))
+                            Cell: cellData => (
+                                cellData.value
+                                    .filter(value => !!value.to)
+                                    .map(value => value.to)
+                                    .map((tos, index) => (
+                                        <ul key={index}>
+                                            {tos.map((to, index) =>
+                                                (<li key={index}>{to.email}</li>))}
+                                        </ul>)
+                                    ))
                         },
                         {
                             Header: 'content',

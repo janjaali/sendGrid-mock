@@ -5,9 +5,11 @@ Content-Type: application/json
 {
     "personalizations": [
         {
-            "to": {
+            "to": [{
                 "email": "to@example.com"
-            }
+            }, {
+                "email": "to2@example.com"
+            }]
         }
     ],
     "from": {
