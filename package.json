@@ -1,6 +1,6 @@
 {
   "name": "sendgrid-mock",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "SendGrid API mock",
   "scripts": {
     "server-dev": "set API_KEY=sendgrid-api-key&& node ./src/api/app.js",
@@ -23,6 +23,6 @@
     "eslint": "^5.12.1",
     "eslint-plugin-react": "^7.12.4",
     "http-proxy-middleware": "^0.19.1",
-    "parcel-bundler": "^1.11.0"
+    "parcel-bundler": "^1.12.3"
   }
 }
