@@ -10,6 +10,10 @@
     "build": "parcel build ./src/ui/index.html"
   },
   "author": "janjaali",
+  "repository": {
+    "url": "https://github.com/janjaali/sendGrid-mock",
+    "type": "git"
+  },
   "dependencies": {
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
