@@ -83,7 +83,9 @@ class Mails extends React.Component {
                                 return (
                                     <div key={index}>
                                         <b>{value.type}</b><br />
-                                        {value.value}
+                                        <div dangerouslySetInnerHTML={{
+                                            __html: value.value,
+                                        }} />
                                     </div>
                                 );
                             }))

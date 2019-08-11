@@ -19,7 +19,7 @@ Content-Type: application/json
     "content": [
         {
             "type": "text/plain",
-            "value": "even more important content"
+            "value": "even more important content containing a link <a href=\"http://example.com/path?query=value\">http://example.com/path?query=value</a>"
         }
     ]
 }
