@@ -38,13 +38,20 @@ The server is based on [node]/[express]. [React] is used for the UI.
 To build a publish-able docker image you may use:
 
 ```shell
- docker build -t ghashange/sendgrid-mock:1.0.3 .
+ docker build -t ghashange/sendgrid-mock:1.1.0 .
 ```
 
 ## Release
 
-Builds can be pushed to [dockerhub](https://hub.docker.com/) via:
+Built docker images can be pushed to [dockerhub](https://hub.docker.com/):
 
 ```shell
-docker push ghashange/sendgrid-mock:1.0.3
+docker push ghashange/sendgrid-mock:1.1.0
+```
+
+Please do not forget to tag the latest release (and push it to the repository):
+
+```shell
+> git tag -a v1.1.0 -m "v1.1.0"
+> git push --tags
 ```
