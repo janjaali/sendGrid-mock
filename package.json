@@ -24,9 +24,10 @@
     "react-table": "^6.9.0"
   },
   "devDependencies": {
+    "babel-eslint": "^10.0.2",
     "concurrently": "^4.1.1",
-    "eslint": "^5.16.0",
-    "eslint-plugin-react": "^7.12.4",
+    "eslint": "^6.1.0",
+    "eslint-plugin-react": "^7.14.3",
     "http-proxy-middleware": "^0.19.1",
     "parcel-bundler": "^1.12.3"
   }
