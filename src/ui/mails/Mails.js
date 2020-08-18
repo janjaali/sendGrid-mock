@@ -24,6 +24,23 @@ class Mails extends React.Component {
     _fetchMails() {
         fetch('/api/mails')
             .then(data => (data.json()))
+            .then(data => {
+                data.forEach(m => {
+                    if(m.personalizations[0].dynamic_template_data) {
+                        m.displayContent = [
+                            {
+                                type: "template: "+ m.template_id, 
+                                value: JSON.stringify(m.personalizations[0].dynamic_template_data)
+                            }]
+                    }
+                    else
+                    {
+                        m.displayContent = m.content;
+                    }
+                });
+
+                return data;
+            })
             .then(mails => {
                 this.setState({ mails });
             });
@@ -78,7 +95,7 @@ class Mails extends React.Component {
                             Header: 'content',
                             id: 'content',
                             style: { 'whiteSpace': 'unset' },
-                            accessor: mail => mail.content,
+                            accessor: mail => mail.displayContent,
                             Cell: cellData => (cellData.value.map((value, index) => {
                                 return (
                                     <div key={index}>
