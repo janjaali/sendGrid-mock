@@ -33,6 +33,11 @@ app.get('/api/mails', (req, res) => {
     res.send(mails);
 });
 
+app.delete('/api/mails', (req, res) => {
+    mails = [];
+    res.send(200);
+});
+
 app.use(express.static(path.join(__dirname, '../../dist')));
 
 app.get('/', function (req, res) {
