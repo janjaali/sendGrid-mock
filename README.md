@@ -9,6 +9,8 @@ SendGrid-Mock provides the following functionalities:
 
 * Retrieve sent mails via an API (`GET /api/mails`)
 
+* Clear sent mails via an API (`DELETE /api/mails`)
+
 * Retrieve sent mails via a simple UI
 
 ## Dockerized
