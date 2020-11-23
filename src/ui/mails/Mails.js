@@ -10,6 +10,7 @@ class Mails extends React.Component {
         };
 
         this.refresh = this.refresh.bind(this);
+        this.filterOnEmailTo = this.filterOnEmailTo.bind(this);
         this._fetchMails = this._fetchMails.bind(this);
     }
 
@@ -21,8 +22,16 @@ class Mails extends React.Component {
         this._fetchMails();
     }
 
-    _fetchMails() {
-        fetch('/api/mails')
+    filterOnEmailTo(event) {
+        if(event.target.value.length > 3) {
+            this._fetchMails(`?to=%${event.target.value}%`);
+        } else if (event.target.value.length < 1) {
+            this._fetchMails();
+        }
+    }
+
+    _fetchMails(query = '') {
+        fetch(`/api/mails${query}`)
             .then(data => (data.json()))
             .then(data => {
                 data.forEach(m => {
@@ -51,6 +60,10 @@ class Mails extends React.Component {
 
         return <div>
             <div style={{ textAlign: 'right' }}>
+                <div style={{ display: 'inline-block', marginRight: '5px' }}>
+                    <label>Filter on to:&nbsp;</label>
+                    <input type="search" onChange={this.filterOnEmailTo} />
+                </div>
                 <a href='#' onClick={this.refresh}>Refresh</a>
             </div>
 
