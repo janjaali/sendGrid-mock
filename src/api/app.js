@@ -13,7 +13,7 @@ let mails = [];
 
 app.post('/v3/mail/send', (req, res) => {
     const reqApiKey = req.headers.authorization;
-    if (reqApiKey === `Bearer ${process.env.API_KEY}`) {
+    if (reqApiKey === `Bearer ${process.env.API_KEY || '90c3a3ae-163c-4d79-9988-a8893f1e6546'}`) {
         const mailWithTimestamp = { ...req.body, datetime: new Date() };
         mails = [...mails, mailWithTimestamp];
         res.sendStatus(202);
@@ -30,7 +30,14 @@ app.post('/v3/mail/send', (req, res) => {
 });
 
 app.get('/api/mails', (req, res) => {
-    res.send(mails);
+    let results = mails;
+    if(req.query.to) {
+        results = results.filter(email => filterByEmail(email, req.query.to))
+    }
+    if(req.query.subject) {
+        results = results.filter(email => filterBySubject(email, req.query.subject))
+    }
+    res.send(results);
 });
 
 app.delete('/api/mails', (req, res) => {
@@ -46,3 +53,18 @@ app.get('/', function (req, res) {
 
 const port = 3000;
 app.listen(port, () => logger.info(`Start service on port ${port}!`));
+
+function filterByEmail(email, to) {
+    let actualToEmail = email["personalizations"][0]["to"][0]["email"];
+    return actualToEmail === to;
+}
+
+function filterBySubject(email, subject) {
+    let actualSubject = email["subject"];
+    if(subject.startsWith('%') && subject.endsWith('%')) {
+        searchSubject = subject.substring(1, subject.length - 1);
+        console.log('Searching for emails with subject containing', searchSubject);
+        return actualSubject.includes(searchSubject);
+    }
+    return actualSubject === subject;
+}

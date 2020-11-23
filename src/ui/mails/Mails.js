@@ -99,7 +99,7 @@ class Mails extends React.Component {
                             Cell: cellData => (cellData.value.map((value, index) => {
                                 return (
                                     <div key={index}>
-                                        <b>{value.type}</b><br />
+                                        <b>{value.type}Test</b><br />
                                         <div dangerouslySetInnerHTML={{
                                             __html: value.value,
                                         }} />
