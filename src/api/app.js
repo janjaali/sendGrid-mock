@@ -41,7 +41,11 @@ app.get('/api/mails', (req, res) => {
 });
 
 app.delete('/api/mails', (req, res) => {
-    mails = [];
+    if(req.query.to) {
+        mails = mails.filter(email => !filterByEmail(email, req.query.to))
+    } else {
+        mails = [];
+    }
     res.send(200);
 });
 
