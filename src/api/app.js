@@ -7,16 +7,15 @@ let logger = log4js.getLogger('sendgrid-mock');
 logger.level = 'debug';
 
 const app = express();
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '5mb'}));
 
 let mails = [];
 
 app.post('/v3/mail/send', (req, res) => {
-    if(process.env.MAIL_HISTORY_DURATION) {
-        const durationAsSeconds = parseDurationString(process.env.MAIL_HISTORY_DURATION);
-        const dateTimeBoundary = new Date(Date.now() - (durationAsSeconds * 1000));
-        mails = mails.filter(email => removeEmailIfOlderThan(email, dateTimeBoundary))
-    }
+    const cleanUpAfter = process.env.MAIL_HISTORY_DURATION || 'PT24H';
+    const durationAsSeconds = parseDurationString(cleanUpAfter);
+    const dateTimeBoundary = new Date(Date.now() - (durationAsSeconds * 1000));
+    mails = mails.filter(email => removeEmailIfOlderThan(email, dateTimeBoundary));
     
     const reqApiKey = req.headers.authorization;
     if (reqApiKey === `Bearer ${process.env.API_KEY}`) {
