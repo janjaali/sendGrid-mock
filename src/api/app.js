@@ -12,8 +12,14 @@ app.use(bodyParser.json());
 let mails = [];
 
 app.post('/v3/mail/send', (req, res) => {
+    if(process.env.MAIL_HISTORY_DURATION) {
+        const durationAsSeconds = parseDurationString(process.env.MAIL_HISTORY_DURATION);
+        const dateTimeBoundary = new Date(Date.now() - (durationAsSeconds * 1000));
+        mails = mails.filter(email => removeEmailIfOlderThan(email, dateTimeBoundary))
+    }
+    
     const reqApiKey = req.headers.authorization;
-    if (reqApiKey === `Bearer ${process.env.API_KEY || '90c3a3ae-163c-4d79-9988-a8893f1e6546'}`) {
+    if (reqApiKey === `Bearer ${process.env.API_KEY}`) {
         const mailWithTimestamp = { ...req.body, datetime: new Date() };
         mails = [...mails, mailWithTimestamp];
         res.sendStatus(202);
@@ -61,6 +67,10 @@ app.get('/', function (req, res) {
 const port = 3000;
 app.listen(port, () => logger.info(`Start service on port ${port}!`));
 
+function removeEmailIfOlderThan(email, dateTimeBoundary) {
+    return email["datetime"] > dateTimeBoundary;
+}
+
 function filterByEmail(email, to) {
     let actualToEmail = email["personalizations"][0]["to"][0]["email"];
     return actualToEmail === to;
@@ -82,4 +92,19 @@ function filterByDateTimeSince(email, dateTimeSinceAsString) {
         throw "The provided date cannot be parsed";
     }
     return email["datetime"] > dateTimeSince;
+}
+
+function parseDurationString( durationString ){
+    var stringPattern = /^PT(?:(\d+)D)?(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:\.\d{1,3})?)S)?$/;
+    var stringParts = stringPattern.exec( durationString );
+    return (
+             (
+               (
+                 ( stringParts[1] === undefined ? 0 : stringParts[1]*1 )  /* Days */
+                 * 24 + ( stringParts[2] === undefined ? 0 : stringParts[2]*1 ) /* Hours */
+               )
+               * 60 + ( stringParts[3] === undefined ? 0 : stringParts[3]*1 ) /* Minutes */
+             )
+             * 60 + ( stringParts[4] === undefined ? 0 : stringParts[4]*1 ) /* Seconds */
+           );
 }
