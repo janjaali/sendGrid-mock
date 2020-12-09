@@ -37,6 +37,9 @@ app.get('/api/mails', (req, res) => {
     if(req.query.subject) {
         results = results.filter(email => filterBySubject(email, req.query.subject))
     }
+    if(req.query.dateTimeSince) {
+        results = results.filter(email => filterByDateTimeSince(email, req.query.dateTimeSince))
+    }
     res.send(results);
 });
 
@@ -71,4 +74,12 @@ function filterBySubject(email, subject) {
         return actualSubject.includes(searchSubject);
     }
     return actualSubject === subject;
+}
+
+function filterByDateTimeSince(email, dateTimeSinceAsString) {
+    let dateTimeSince = Date.parse(dateTimeSinceAsString);
+    if(dateTimeSince === NaN) {
+        throw "The provided date cannot be parsed";
+    }
+    return email["datetime"] > dateTimeSince;
 }
