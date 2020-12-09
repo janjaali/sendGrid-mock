@@ -11,7 +11,7 @@ SendGrid-Mock provides the following functionalities:
   * `GET /api/mails?to=email@address.com`
   * `GET /api/mails?subject=The subject` (subject must match exactly)
   * `GET /api/mails?subject=%subject%` (subject contains text)
-  * `GET /api/mails?dateTimeSince=2020-12-06T10:00:00` (only emails after specified dateTimeSince (iso-format e.g. YYYY-MM-DDThh:mm:ssZ))
+  * `GET /api/mails?dateTimeSince=2020-12-06T10:00:00` (only emails after specified dateTimeSince (iso-format e.g. `YYYY-MM-DDThh:mm:ssZ`))
   * All the above can be combined
 
 * Clear sent mails via an API (`DELETE /api/mails`)
