@@ -15,7 +15,7 @@ if(process.env.AUTHENTICATION) {
     const users = {};
     for (const auth of authenticationParams) {
         const userPasswordCombo = auth.split(":");
-        users[userPasswordCombo[0]] = userPasswordCombo[1]
+        users[userPasswordCombo[0]] = userPasswordCombo[1];
     }
     app.use(basicAuth({challenge: true, users}));
 }
@@ -23,16 +23,16 @@ if(process.env.AUTHENTICATION) {
 let mails = [];
 
 app.post('/v3/mail/send', (req, res) => {
-    const cleanUpAfter = process.env.MAIL_HISTORY_DURATION || 'PT24H';
-    const durationAsSeconds = parseDurationString(cleanUpAfter);
-    const dateTimeBoundary = new Date(Date.now() - (durationAsSeconds * 1000));
-    mails = mails.filter(email => email["datetime"] > dateTimeBoundary);
-    
     const reqApiKey = req.headers.authorization;
     if (reqApiKey === `Bearer ${process.env.API_KEY}`) {
+        deleteOldMails();
+
         const mailWithTimestamp = { ...req.body, datetime: new Date() };
         mails = [...mails, mailWithTimestamp];
         res.sendStatus(202);
+        
+        const memoryUsage = process.memoryUsage();
+        console.info(`SendGrid Mock has ${mails.length} mails. (Memory: ${formatBytes(memoryUsage.heapUsed)} used of ${formatBytes(memoryUsage.heapTotal)})`);
     } else {
         res.status(403).send({
             errors: [{
@@ -77,6 +77,13 @@ app.get('/', function (req, res) {
 const port = 3000;
 app.listen(port, () => logger.info(`Start service on port ${port}!`));
 
+function deleteOldMails() {
+    const cleanUpAfter = process.env.MAIL_HISTORY_DURATION || 'PT24H';
+    const durationAsSeconds = parseDurationString(cleanUpAfter);
+    const dateTimeBoundary = new Date(Date.now() - (durationAsSeconds * 1000));
+    mails = mails.filter(email => email["datetime"] > dateTimeBoundary);
+}
+
 function emailWasSentTo(email, to) {
     const personalizations = email["personalizations"];
     for(personalization of personalizations) {
@@ -119,4 +126,16 @@ function parseDurationString(durationString){
              )
              * 60 + ( stringParts[4] === undefined ? 0 : stringParts[4]*1 ) /* Seconds */
            );
+}
+
+function formatBytes(bytes, decimals = 2) {
+    if (bytes === 0) return '0 Bytes';
+
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
