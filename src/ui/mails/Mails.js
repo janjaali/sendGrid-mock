@@ -24,7 +24,9 @@ class Mails extends React.Component {
 
     filterOnEmailTo(event) {
         if(event.target.value.length > 3) {
-            this._fetchMails(`?to=${event.target.value}`);
+            this._fetchMails(`?to=%${event.target.value}%`);
+        } else if (event.target.value.length < 1) {
+            this._fetchMails();
         }
     }
 

@@ -88,8 +88,15 @@ function emailWasSentTo(email, to) {
     const personalizations = email["personalizations"];
     for(personalization of personalizations) {
         for(receiver of personalization["to"]) {
-            if(receiver["email"] == to) {
-                return true;
+            if(to.startsWith('%') && to.endsWith('%')) {
+                searchTo = to.substring(1, to.length - 1);
+                if(receiver["email"].includes(searchTo)) {
+                    return true;
+                }
+            } else {
+                if(receiver["email"] == to) {
+                    return true;
+                }
             }
         }
     }
