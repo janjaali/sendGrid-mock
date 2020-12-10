@@ -15,7 +15,7 @@ app.post('/v3/mail/send', (req, res) => {
     const cleanUpAfter = process.env.MAIL_HISTORY_DURATION || 'PT24H';
     const durationAsSeconds = parseDurationString(cleanUpAfter);
     const dateTimeBoundary = new Date(Date.now() - (durationAsSeconds * 1000));
-    mails = mails.filter(email => removeEmailIfOlderThan(email, dateTimeBoundary));
+    mails = mails.filter(email => email["datetime"] > dateTimeBoundary);
     
     const reqApiKey = req.headers.authorization;
     if (reqApiKey === `Bearer ${process.env.API_KEY}`) {
@@ -37,13 +37,13 @@ app.post('/v3/mail/send', (req, res) => {
 app.get('/api/mails', (req, res) => {
     let results = mails;
     if(req.query.to) {
-        results = results.filter(email => filterByEmail(email, req.query.to))
+        results = results.filter(email => emailWasSentTo(email, req.query.to))
     }
     if(req.query.subject) {
-        results = results.filter(email => filterBySubject(email, req.query.subject))
+        results = results.filter(email => emailContainsSubject(email, req.query.subject))
     }
     if(req.query.dateTimeSince) {
-        results = results.filter(email => filterByDateTimeSince(email, req.query.dateTimeSince))
+        results = results.filter(email => emailWasSentAfter(email, req.query.dateTimeSince))
     }
     res.send(results);
 });
@@ -66,36 +66,38 @@ app.get('/', function (req, res) {
 const port = 3000;
 app.listen(port, () => logger.info(`Start service on port ${port}!`));
 
-function removeEmailIfOlderThan(email, dateTimeBoundary) {
-    return email["datetime"] > dateTimeBoundary;
+function emailWasSentTo(email, to) {
+    const personalizations = email["personalizations"];
+    for(personalization of personalizations) {
+        for(receiver of personalization["to"]) {
+            if(receiver["email"] == to) {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
-function filterByEmail(email, to) {
-    let actualToEmail = email["personalizations"][0]["to"][0]["email"];
-    return actualToEmail === to;
-}
-
-function filterBySubject(email, subject) {
+function emailContainsSubject(email, subject) {
     let actualSubject = email["subject"];
     if(subject.startsWith('%') && subject.endsWith('%')) {
         searchSubject = subject.substring(1, subject.length - 1);
-        console.log('Searching for emails with subject containing', searchSubject);
         return actualSubject.includes(searchSubject);
     }
     return actualSubject === subject;
 }
 
-function filterByDateTimeSince(email, dateTimeSinceAsString) {
+function emailWasSentAfter(email, dateTimeSinceAsString) {
     let dateTimeSince = Date.parse(dateTimeSinceAsString);
-    if(dateTimeSince === NaN) {
+    if(isNaN(dateTimeSince)) {
         throw "The provided date cannot be parsed";
     }
     return email["datetime"] > dateTimeSince;
 }
 
-function parseDurationString( durationString ){
+function parseDurationString(durationString){
     var stringPattern = /^PT(?:(\d+)D)?(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:\.\d{1,3})?)S)?$/;
-    var stringParts = stringPattern.exec( durationString );
+    var stringParts = stringPattern.exec(durationString.trim());
     return (
              (
                (
