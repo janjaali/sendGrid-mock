@@ -1,12 +1,14 @@
 import React from 'react';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css';
+import PopUp from "./popup"; 
 
 class Mails extends React.Component {
     constructor() {
         super();
         this.state = {
             mails: [],
+            currentEmail: null
         };
 
         this.refresh = this.refresh.bind(this);
@@ -24,14 +26,15 @@ class Mails extends React.Component {
 
     filterOnEmailTo(event) {
         if(event.target.value.length > 3) {
-            this._fetchMails(`?to=%${event.target.value}%`);
+            this._fetchMails(`to=%${event.target.value}%`);
         } else if (event.target.value.length < 1) {
             this._fetchMails();
         }
     }
 
     _fetchMails(query = '') {
-        fetch(`/api/mails${query}`)
+        const queryString = `${query}&page=0&pageSize=100`
+        fetch(`/api/mails?${queryString}`)
             .then(data => (data.json()))
             .then(data => {
                 data.forEach(m => {
@@ -56,7 +59,18 @@ class Mails extends React.Component {
     }
 
     render() {
+        const setCurrentEmail = email => {
+            this.state.currentEmail = email;
+            this.forceUpdate();
+        }
+
+        const hide = () => {
+            this.state.currentEmail = null;
+            this.forceUpdate();
+        }
+
         const data = this.state.mails;
+        const currentEmail = this.state.currentEmail;
 
         return <div>
             <div style={{ textAlign: 'right' }}>
@@ -67,58 +81,64 @@ class Mails extends React.Component {
                 <a href='#' onClick={this.refresh}>Refresh</a>
             </div>
 
+            {currentEmail ? <PopUp currentEmail={currentEmail} hide={hide} /> : null }
+
             <ReactTable
                 style={{ marginTop: '12px' }}
                 data={data}
+                showPageSizeOptions={false}
                 columns={[{
                     Header: 'Mails',
                     columns: [
                         {
                             Header: 'datetime',
                             id: 'datetime',
+                            headerStyle: {textAlign: 'left'},
+                            width: 220,
                             accessor: mail => mail.datetime
                         },
                         {
                             Header: 'from',
                             id: 'from',
+                            headerStyle: {textAlign: 'left'},
+                            width: 220,
                             accessor: mail => (mail.from ? mail.from.email : '')
                         },
                         {
                             Header: 'subject',
                             id: 'subject',
+                            headerStyle: {textAlign: 'left'},
                             style: { 'whiteSpace': 'unset' },
+                            minWidth: 200,
                             accessor: mail => mail.subject
                         },
                         {
                             Header: 'to',
                             id: 'to',
+                            headerStyle: {textAlign: 'left'},
                             accessor: mail => mail.personalizations,
                             Cell: cellData => (
                                 cellData.value
                                     .filter(value => !!value.to)
                                     .map(value => value.to)
                                     .map((tos, index) => (
-                                        <ul key={index}>
-                                            {tos.map((to, index) =>
-                                                (<li key={index}>{to.email}</li>))}
-                                        </ul>)
+                                        <span key={index}>
+                                            {tos.map((to, index) => 
+                                                (<span key={index}>{to.email}</span> ))}
+                                        </span>)
                                     ))
                         },
                         {
-                            Header: 'content',
+                            Header: 'Actions',
                             id: 'content',
+                            headerStyle: {textAlign: 'left'},
                             style: { 'whiteSpace': 'unset' },
                             accessor: mail => mail.displayContent,
-                            Cell: cellData => (cellData.value.map((value, index) => {
-                                return (
-                                    <div key={index}>
-                                        <b>{value.type}</b><br />
-                                        <div dangerouslySetInnerHTML={{
-                                            __html: value.value,
-                                        }} />
+                            Cell: cellData => (
+                                    <div>
+                                         <a onClick={() => setCurrentEmail(cellData.value.find(mimeTypeEmails => mimeTypeEmails.type="text/html").value)}><b>Show email</b></a>&nbsp;<br />
                                     </div>
-                                );
-                            }))
+                                )
                         }
                     ]
                 }]}

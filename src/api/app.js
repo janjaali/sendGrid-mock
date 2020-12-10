@@ -3,7 +3,7 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 
-let logger = log4js.getLogger('sendgrid-mock');
+const logger = log4js.getLogger('sendgrid-mock');
 logger.level = 'debug';
 
 const app = express();
@@ -17,11 +17,11 @@ app.post('/v3/mail/send', (req, res) => {
         deleteOldMails();
 
         const mailWithTimestamp = { ...req.body, datetime: new Date() };
-        mails = [...mails, mailWithTimestamp];
+        mails = [mailWithTimestamp, ...mails];
         res.sendStatus(202);
         
         const memoryUsage = process.memoryUsage();
-        console.info(`SendGrid Mock has ${mails.length} mails. (Memory: ${formatBytes(memoryUsage.heapUsed)} used of ${formatBytes(memoryUsage.heapTotal)})`);
+        logger.info(`SendGrid Mock has ${mails.length} mails. (Memory: ${formatBytes(memoryUsage.heapUsed)} used of ${formatBytes(memoryUsage.heapTotal)})`);
     } else {
         res.status(403).send({
             errors: [{
@@ -34,6 +34,17 @@ app.post('/v3/mail/send', (req, res) => {
     }
 });
 
+if(process.env.AUTHENTICATION) {
+    const basicAuth = require('express-basic-auth')
+    const authenticationParams = process.env.AUTHENTICATION.split(";");
+    const users = {};
+    for (const auth of authenticationParams) {
+        const userPasswordCombo = auth.split(":");
+        users[userPasswordCombo[0]] = userPasswordCombo[1];
+    }
+    app.use(basicAuth({challenge: true, users}));
+}
+
 app.get('/api/mails', (req, res) => {
     let results = mails;
     if(req.query.to) {
@@ -44,6 +55,14 @@ app.get('/api/mails', (req, res) => {
     }
     if(req.query.dateTimeSince) {
         results = results.filter(email => emailWasSentAfter(email, req.query.dateTimeSince))
+    }
+
+    if(req.query.page && req.query.pageSize) {
+        const start = parseInt(req.query.page) * parseInt(req.query.pageSize);
+        const end = start + parseInt(req.query.pageSize);
+        results = results.slice(start, end);
+    } else {
+        results = results.slice(0, 20);
     }
     res.send(results);
 });
@@ -57,16 +76,6 @@ app.delete('/api/mails', (req, res) => {
     res.send(200);
 });
 
-if(process.env.AUTHENTICATION) {
-    const basicAuth = require('express-basic-auth')
-    const authenticationParams = process.env.AUTHENTICATION.split(";");
-    const users = {};
-    for (const auth of authenticationParams) {
-        const userPasswordCombo = auth.split(":");
-        users[userPasswordCombo[0]] = userPasswordCombo[1];
-    }
-    app.use(basicAuth({challenge: true, users}));
-}
 app.use(express.static(path.join(__dirname, '../../dist')));
 app.get('/', function (req, res) {
     res.sendFile(path.join(__dirname, '../../dist', 'index.html'));
@@ -102,7 +111,7 @@ function emailWasSentTo(email, to) {
 }
 
 function emailContainsSubject(email, subject) {
-    let actualSubject = email["subject"];
+    const actualSubject = email["subject"];
     if(subject.startsWith('%') && subject.endsWith('%')) {
         searchSubject = subject.substring(1, subject.length - 1);
         return actualSubject.includes(searchSubject);
@@ -111,7 +120,7 @@ function emailContainsSubject(email, subject) {
 }
 
 function emailWasSentAfter(email, dateTimeSinceAsString) {
-    let dateTimeSince = Date.parse(dateTimeSinceAsString);
+    const dateTimeSince = Date.parse(dateTimeSinceAsString);
     if(isNaN(dateTimeSince)) {
         throw "The provided date cannot be parsed";
     }
