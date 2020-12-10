@@ -15,6 +15,7 @@ SendGrid-Mock provides the following functionalities:
   * All the above can be combined
 
 * Clear sent mails via an API (`DELETE /api/mails`)
+  * You can also delete all mails sent to a certain email address: `DELETE /api/mails?to=email@address.com`
 
 * Retrieve sent mails via a simple UI
   * You can add basic authentication to it by specifying an environment variable `AUTHENTICATION` which has the following format: `user1:passwordForUser1;user2:passwordForUser2`
