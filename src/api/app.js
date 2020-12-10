@@ -9,6 +9,17 @@ logger.level = 'debug';
 const app = express();
 app.use(bodyParser.json({limit: '5mb'}));
 
+if(process.env.AUTHENTICATION) {
+    const basicAuth = require('express-basic-auth')
+    const authenticationParams = process.env.AUTHENTICATION.split(";");
+    const users = {};
+    for (const auth of authenticationParams) {
+        const userPasswordCombo = auth.split(":");
+        users[userPasswordCombo[0]] = userPasswordCombo[1]
+    }
+    app.use(basicAuth({challenge: true, users}));
+}
+
 let mails = [];
 
 app.post('/v3/mail/send', (req, res) => {

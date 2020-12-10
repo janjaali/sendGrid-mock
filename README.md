@@ -17,6 +17,7 @@ SendGrid-Mock provides the following functionalities:
 * Clear sent mails via an API (`DELETE /api/mails`)
 
 * Retrieve sent mails via a simple UI
+  * You can add basic authentication to it by specifying an environment variable `AUTHENTICATION` which has the following format: `user1:passwordForUser1;user2:passwordForUser2`
 
 * By default, all emails older than 24 hours will be deleted. This can be configured using environment variable `MAIL_HISTORY_DURATION` which uses [ISO-8601 Duration format](https://en.wikipedia.org/wiki/ISO_8601#Durations) such as 'PT24H'.
 

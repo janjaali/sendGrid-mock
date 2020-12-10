@@ -19,6 +19,7 @@
   "dependencies": {
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
+    "express-basic-auth": "^1.2.0",
     "log4js": "^4.0.1",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
