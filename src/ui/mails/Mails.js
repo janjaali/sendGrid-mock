@@ -6,13 +6,20 @@ import PopUp from "./popup";
 class Mails extends React.Component {
     constructor() {
         super();
+        const queryParams = new URLSearchParams(location.search);
         this.state = {
             mails: [],
-            currentEmail: null
+            currentEmail: null,
+            subject: queryParams.get('subject') || '',
+            to: queryParams.get('to') || '',
         };
+        console.log(this.state);
+
+        this.lastQuery = '';
 
         this.refresh = this.refresh.bind(this);
-        this.filterOnEmailTo = this.filterOnEmailTo.bind(this);
+        this._filterEmailTo = this._filterEmailTo.bind(this);
+        this._filterEmailSubject = this._filterEmailSubject.bind(this);
         this._fetchMails = this._fetchMails.bind(this);
     }
 
@@ -24,17 +31,35 @@ class Mails extends React.Component {
         this._fetchMails();
     }
 
-    filterOnEmailTo(event) {
-        if(event.target.value.length > 3) {
-            this._fetchMails(`to=%${event.target.value}%`);
-        } else if (event.target.value.length < 1) {
-            this._fetchMails();
-        }
+    _filterEmailTo(event) {
+        this.state.to = event.target.value;
+        this.forceUpdate();
+        this._fetchMails();
     }
 
-    _fetchMails(query = '') {
-        const queryString = `${query}&page=0&pageSize=100`
-        fetch(`/api/mails?${queryString}`)
+    _filterEmailSubject(event) {
+        this.state.subject = event.target.value;
+        this.forceUpdate();
+        this._fetchMails();
+    }
+
+    _fetchMails() {
+        const apiParams = new URLSearchParams('page=0&pageSize=100');
+        const uiParams = new URLSearchParams(location.search);
+        
+        uiParams.forEach((key, value) => apiParams.set(key, value));
+        
+        if(this.state.to.length > 3) {
+            apiParams.set('to', `%${this.state.to}%`);
+        }
+        if(this.state.subject.length > 3) {
+            apiParams.set('subject', `%${this.state.subject}%`);
+        }
+
+        if(apiParams.toString() == this.lastQuery) return;
+
+        this.lastQuery = apiParams.toString();
+        fetch(`/api/mails?${this.lastQuery}`)
             .then(data => (data.json()))
             .then(data => {
                 data.forEach(m => {
@@ -71,12 +96,17 @@ class Mails extends React.Component {
 
         const data = this.state.mails;
         const currentEmail = this.state.currentEmail;
+        
 
         return <div>
             <div style={{ textAlign: 'right' }}>
                 <div style={{ display: 'inline-block', marginRight: '5px' }}>
+                    <label>Filter on subject:&nbsp;</label>
+                    <input type="search" onChange={this._filterEmailSubject} value={this.state.subject} />
+                </div>
+                <div style={{ display: 'inline-block', marginRight: '5px' }}>
                     <label>Filter on to:&nbsp;</label>
-                    <input type="search" onChange={this.filterOnEmailTo} />
+                    <input type="search" onChange={this._filterEmailTo} value={this.state.to} />
                 </div>
                 <a href='#' onClick={this.refresh}>Refresh</a>
             </div>
@@ -122,10 +152,14 @@ class Mails extends React.Component {
                                     .filter(value => !!value.to)
                                     .map(value => value.to)
                                     .map((tos, index) => (
-                                        <span key={index}>
-                                            {tos.map((to, index) => 
-                                                (<span key={index}>{to.email}</span> ))}
-                                        </span>)
+                                        <div key={index}>
+                                            {tos.length > 1
+                                                ? <ul>
+                                                    {tos.map((to, subIndex) =>(<li key={subIndex}>{to.email}</li>))}
+                                                  </ul>
+                                                : <span>{tos[0].email}</span>
+                                            }
+                                        </div>)
                                     ))
                         },
                         {
