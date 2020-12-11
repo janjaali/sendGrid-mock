@@ -13,7 +13,6 @@ class Mails extends React.Component {
             subject: queryParams.get('subject') || '',
             to: queryParams.get('to') || '',
         };
-        console.log(this.state);
 
         this.lastQuery = '';
 
