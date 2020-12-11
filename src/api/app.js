@@ -97,11 +97,11 @@ function emailWasSentTo(email, to) {
         for(receiver of personalization["to"]) {
             if(to.startsWith('%') && to.endsWith('%')) {
                 searchTo = to.substring(1, to.length - 1);
-                if(receiver["email"].includes(searchTo)) {
+                if(receiver["email"].toLowerCase().includes(searchTo.toLowerCase())) {
                     return true;
                 }
             } else {
-                if(receiver["email"] == to) {
+                if(receiver["email"].toLowerCase() == to.toLowerCase()) {
                     return true;
                 }
             }
@@ -114,9 +114,9 @@ function emailContainsSubject(email, subject) {
     const actualSubject = email["subject"];
     if(subject.startsWith('%') && subject.endsWith('%')) {
         searchSubject = subject.substring(1, subject.length - 1);
-        return actualSubject.includes(searchSubject);
+        return actualSubject.toLowerCase().includes(searchSubject.toLowerCase());
     }
-    return actualSubject === subject;
+    return actualSubject.toLowerCase() === subject.toLowerCase();
 }
 
 function emailWasSentAfter(email, dateTimeSinceAsString) {
