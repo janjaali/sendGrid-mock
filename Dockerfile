@@ -1,5 +1,5 @@
 FROM node:10.15-slim
-LABEL author="Siyavash Habashi (ghashange)"
+LABEL author="Siyavash Habashi (ghashange) / Ronald Dehuysser (Bringme)"
 
 ENV API_KEY=sendgrid-api-key
 
@@ -10,4 +10,4 @@ ADD package*.json ./
 RUN npm install
 RUN npm run build
 
-CMD ["npm", "run", "server-dev"]
+CMD ["npm", "run", "server-run"]

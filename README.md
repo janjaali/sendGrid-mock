@@ -7,11 +7,20 @@ SendGrid-Mock provides the following functionalities:
 * Send mails to a mocked sendgrid-api (v3: `POST /v3/mail/send`)
   * Authentication included
 
-* Retrieve sent mails via an API (`GET /api/mails`)
+* Retrieve sent mails via an API (`GET /api/mails`). You can also filter these mails as follows:
+  * `GET /api/mails?to=email@address.com`
+  * `GET /api/mails?subject=The subject` (subject must match exactly)
+  * `GET /api/mails?subject=%subject%` (subject contains text)
+  * `GET /api/mails?dateTimeSince=2020-12-06T10:00:00` (only emails after specified dateTimeSince ([ISO-8601 format](https://en.wikipedia.org/wiki/ISO_8601) such as `YYYY-MM-DDThh:mm:ssZ`))
+  * All the above can be combined
 
 * Clear sent mails via an API (`DELETE /api/mails`)
+  * You can also delete all mails sent to a certain email address: `DELETE /api/mails?to=email@address.com`
 
 * Retrieve sent mails via a simple UI
+  * You can add basic authentication to it by specifying an environment variable `AUTHENTICATION` which has the following format: `user1:passwordForUser1;user2:passwordForUser2`
+
+* By default, all emails older than 24 hours will be deleted. This can be configured using environment variable `MAIL_HISTORY_DURATION` which uses [ISO-8601 Duration format](https://en.wikipedia.org/wiki/ISO_8601#Durations) such as 'PT24H'.
 
 ## Dockerized
 
@@ -50,3 +59,4 @@ Builds can be pushed to [dockerhub](https://hub.docker.com/) via:
 ```shell
 docker push ghashange/sendgrid-mock:1.1.1
 ```
+
