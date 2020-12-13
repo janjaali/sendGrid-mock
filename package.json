@@ -3,7 +3,7 @@
   "version": "1.2.0",
   "description": "SendGrid API mock",
   "scripts": {
-    "server-dev": "cross-env API_KEY=sendgrid-api-key MAIL_HISTORY_DURATION=PT24H AUTHENTICATION=admin:admin node ./src/api/app.js",
+    "server-dev": "cross-env API_KEY=sendgrid-api-key MAIL_HISTORY_DURATION=PT24H node ./src/api/app.js",
     "server-run": "node ./src/api/app.js",
     "ui-dev": "node ./scripts/ui-dev.js",
     "dev": "concurrently \"npm run server-dev\" \"npm run ui-dev\"",
