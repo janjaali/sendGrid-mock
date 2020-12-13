@@ -3,7 +3,7 @@
   "version": "1.2.0",
   "description": "SendGrid API mock",
   "scripts": {
-    "server-dev": "export API_KEY=sendgrid-api-key && export MAIL_HISTORY_DURATION=PT24H && node ./src/api/app.js",
+    "server-dev": "set API_KEY=sendgrid-api-key&& set MAIL_HISTORY_DURATION=PT24H&& node ./src/api/app.js",
     "server-run": "node ./src/api/app.js",
     "ui-dev": "node ./scripts/ui-dev.js",
     "dev": "concurrently \"npm run server-dev\" \"npm run ui-dev\"",
@@ -27,7 +27,7 @@
   },
   "devDependencies": {
     "babel-eslint": "^10.0.2",
-    "concurrently": "^4.1.1",
+    "concurrently": "^5.3.0",
     "eslint": "^6.8.0",
     "eslint-plugin-react": "^7.14.3",
     "http-proxy-middleware": "^0.19.1",
