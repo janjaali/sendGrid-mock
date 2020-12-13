@@ -36,7 +36,7 @@ The UI can be accessed at <http://localhost:3000>.
 
 ## Development
 
-Just install dependencies `npm install`, start both server and UI via `npm run dev` and start hacking. You may find useful http-calls in [./http-calls](./http-calls).
+Just install dependencies `npm ci`, start both server and UI via `npm run dev` and start hacking. You may find useful http-calls in [./http-calls](./http-calls).
 
 The server is based on [node]/[express]. [React] is used for the UI.
 
