@@ -1,1 +1,1 @@
-GET http://localhost:3000/mails
+GET http://localhost:3000/api/mails

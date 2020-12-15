@@ -4,6 +4,6 @@ import ReactDOM from 'react-dom';
 import Mails from './mails/Mails';
 
 ReactDOM.render(
-    <Mails />,
-    document.getElementById('root')
+  <Mails />,
+  document.getElementById('root')
 );
