@@ -4,8 +4,8 @@
   "description": "SendGrid API mock",
   "scripts": {
     "test": "jest",
-    "server-dev": "cross-env API_KEY=sendgrid-api-key MAIL_HISTORY_DURATION=PT24H node ./src/api/app.js",
-    "server-run": "node ./src/api/app.js",
+    "server-dev": "cross-env API_KEY=sendgrid-api-key MAIL_HISTORY_DURATION=PT24H node ./src/server/app.js",
+    "server-run": "node ./src/server/app.js",
     "ui-dev": "node ./scripts/ui-dev.js",
     "dev": "concurrently \"npm run server-dev\" \"npm run ui-dev\"",
     "lint": "eslint src",
