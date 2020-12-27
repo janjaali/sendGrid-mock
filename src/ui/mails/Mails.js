@@ -43,7 +43,7 @@ class Mails extends React.Component {
   }
 
   _fetchMails() {
-    const apiParams = new URLSearchParams('page=0&pageSize=100');
+    const apiParams = new URLSearchParams('page=1&pageSize=100');
     const uiParams = new URLSearchParams(location.search);
 
     uiParams.forEach((key, value) => apiParams.set(key, value));
