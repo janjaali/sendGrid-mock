@@ -1,5 +1,7 @@
 # SendGrid-Mock
 
+![Node.js CI](https://github.com/janjaali/sendGrid-mock/workflows/Node.js%20CI/badge.svg)
+
 SendGrid-Mock serves as a simple server mocking the sendgrid-apis for development purposes.
 
 SendGrid-Mock provides the following functionalities:
