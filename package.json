@@ -3,8 +3,9 @@
   "version": "1.2.0",
   "description": "SendGrid API mock",
   "scripts": {
-    "server-dev": "export API_KEY=sendgrid-api-key && export MAIL_HISTORY_DURATION=PT24H && node ./src/api/app.js",
-    "server-run": "node ./src/api/app.js",
+    "test": "jest",
+    "server-dev": "cross-env API_KEY=sendgrid-api-key MAIL_HISTORY_DURATION=PT24H node ./src/server/Server.js",
+    "server-run": "node ./src/server/Server.js",
     "ui-dev": "node ./scripts/ui-dev.js",
     "dev": "concurrently \"npm run server-dev\" \"npm run ui-dev\"",
     "lint": "eslint src",
@@ -16,6 +17,9 @@
     "type": "git"
   },
   "license": "MIT",
+  "engines": {
+    "node": "^15.4.0"
+  },
   "dependencies": {
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
@@ -23,14 +27,18 @@
     "log4js": "^4.0.1",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
-    "react-table": "^6.9.0"
+    "react-table": "^6.9.0",
+    "sinon": "^9.2.2"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.2",
-    "concurrently": "^4.1.1",
+    "concurrently": "^5.3.0",
+    "cross-env": "^7.0.3",
     "eslint": "^6.8.0",
     "eslint-plugin-react": "^7.14.3",
     "http-proxy-middleware": "^0.19.1",
-    "parcel-bundler": "^1.12.4"
+    "jest": "^26.6.3",
+    "parcel-bundler": "^1.12.4",
+    "supertest": "^6.0.1"
   }
 }
