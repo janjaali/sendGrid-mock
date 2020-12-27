@@ -1,10 +1,8 @@
-const log4js = require('log4js');
-
+const {loggerFactory} = require('./logger/log4js');
 const {setupExpressApp} = require('./ExpressApp');
 const MailHandler = require('./handler/MailHandler');
 
-const logger = log4js.getLogger('Server');
-logger.level = 'info';
+const logger = loggerFactory('Server');
 
 const authenticationUsers = (usersString) => {
 

@@ -1,4 +1,6 @@
-const log4js = require('log4js');
+const {loggerFactory} = require('../logger/log4js');
+
+const logger = loggerFactory('MailHandler');
 
 const mailWithTimestamp = (mail) => {
   const now = new Date();
@@ -18,15 +20,13 @@ const formatBytes = (bytes, decimals = 2) => {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 };
 
-const logMemoryUsage = (mails, logger) => {
+const logMemoryUsage = (mails) => {
 
   const memoryUsage = process.memoryUsage();
 
   logger.info(
-    `SendGrid Mock has ${mails.length} mails. (
-     Memory: ${formatBytes(memoryUsage.heapUsed)} 
-     used of ${formatBytes(memoryUsage.heapTotal)}
-  )`);  
+    `SendGrid Mock has ${mails.length} mails. (Memory: ${formatBytes(memoryUsage.heapUsed)} used of ${formatBytes(memoryUsage.heapTotal)})`
+  );  
 };
 
 const parseDurationStringAsSeconds = (durationString) => {
@@ -85,9 +85,7 @@ const mailSentAfter = (mail, dateTime) => {
 };
 
 class MailHandler {
-  
-  #logger = log4js.getLogger('mail-handler');
-  
+    
   #mails = [];
 
   #mailRetentionDurationInSeconds = 86400; // one day
@@ -99,9 +97,6 @@ class MailHandler {
         mailRetentionDuration
       ); 
     }
-
-    // TODO: should not be configured here.
-    this.#logger.level = 'info';
   }
 
   getMails(filterCriteria, paginationCriteria) {
@@ -137,7 +132,7 @@ class MailHandler {
       return Date.parse(mail.datetime).valueOf() >= maxRetentionTime;
     });
 
-    logMemoryUsage(this.#mails, this.#logger);
+    logMemoryUsage(this.#mails);
   }
 
   clear(filterCriteria) {
