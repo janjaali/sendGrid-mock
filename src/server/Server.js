@@ -1,4 +1,4 @@
-const autoSsl = require('@appsaloon/auto-ssl')
+const autoSsl = require('@appsaloon/auto-ssl');
 const {loggerFactory} = require('./logger/log4js');
 const {setupExpressApp} = require('./ExpressApp');
 const MailHandler = require('./handler/MailHandler');
