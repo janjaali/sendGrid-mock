@@ -21,6 +21,7 @@
     "node": "^15.4.0"
   },
   "dependencies": {
+    "@appsaloon/auto-ssl": "^1.0.8",
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
     "express-basic-auth": "^1.2.0",
