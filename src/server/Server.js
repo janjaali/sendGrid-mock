@@ -33,8 +33,10 @@ const app = setupExpressApp(mailHandler, apiAuthentication, process.env.API_KEY)
 
 if(enableSsl) {
   autoSsl(app);
+  logger.info(`Starting service with letsencrypt.org integration (use https)!`)
 } else {
   const serverPort = 3000;
-  app.listen(serverPort, () => logger.info(`Started service on port ${serverPort}!`));
+  logger.info(`Starting service on port ${serverPort}!`)
+  app.listen(serverPort);
 }
 
