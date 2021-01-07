@@ -32,6 +32,11 @@ The SendGrid-Mock server and the UI are both contained in the same docker-image 
 docker run -it -p 3000:3000 -e "API_KEY=sendgrid-api-key" ghashange/sendgrid-mock:1.2.0
 ```
 
+Sendgrid mock also supports SSL using [Let's Encrypt](https://letsencrypt.org/). To enable SSL, run it as follows:
+```shell
+docker run -it -p 3000:3000 -e "API_KEY=sendgrid-api-key" -e "CERT_DOMAINNAMES=[your-domain-name]" -e "CERT_EMAIL=[your-email-address]" ghashange/sendgrid-mock:1.2.0
+```
+
 Example calls are attached in [https-calls](./http-calls).
 
 The UI can be accessed at <http://localhost:3000>.
