@@ -1,4 +1,4 @@
-FROM node:alpine
+FROM node:14.15.4-alpine
 LABEL author="Siyavash Habashi (ghashange) / Ronald Dehuysser (Bringme)"
 
 # adds the packages certbot and tini, make and g++ (make and g++ needed for nmp ci)
@@ -11,6 +11,7 @@ RUN chmod +x /letsencrypt_webroot.sh
 
 # port 80 is mandatory for webroot challenge
 # port 443 is mandatory for https
+# port 3000 default port for UI and server in development mode
 EXPOSE 80
 EXPOSE 443
 EXPOSE 3000
