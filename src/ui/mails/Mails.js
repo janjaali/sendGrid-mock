@@ -165,10 +165,10 @@ class Mails extends React.Component {
               id: 'content',
               headerStyle: { textAlign: 'left' },
               style: { 'whiteSpace': 'unset' },
-              accessor: mail => mail.displayContent,
+              accessor: mail => mail,
               Cell: cellData => (
                 <div>
-                  <a onClick={() => setCurrentEmail(cellData.value.find(mimeTypeEmails => mimeTypeEmails.type = 'text/html').value)}><b>Show email</b></a>&nbsp;<br />
+                  <a onClick={() => setCurrentEmail(cellData.value)}><b>Show email</b></a>&nbsp;<br />
                 </div>
               )
             }
