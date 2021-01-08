@@ -20,7 +20,7 @@ export default class PopUp extends Component {
   render() {
     this.attachments
       .filter(attachment => attachment.disposition == 'inline')
-      .forEach(attachment => this.showCidImageInMail(attachment))
+      .forEach(attachment => this.showCidImageInMail(attachment));
 
     return (
       <div className="modal">
