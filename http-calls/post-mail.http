@@ -18,7 +18,7 @@ Content-Type: application/json
     "subject": "important subject",
     "content": [
         {
-            "type": "text/plain",
+            "type": "text/html",
             "value": "even more important content containing a link <a href=\"http://example.com/path?query=value\">http://example.com/path?query=value</a>"
         }
     ]

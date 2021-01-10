@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css';
-import PopUp from './popup';
+
+import PopUp from './PopUp';
 
 class Mails extends React.Component {
   constructor() {

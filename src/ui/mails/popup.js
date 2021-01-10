@@ -1,40 +1,134 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-export default class PopUp extends Component {
+const SimpleContent = (content) => {
+  return <div>{content}</div>;
+};
 
-  constructor(props) {
-    super(props);
+const HtmlContent = (content, mailContext) => {
 
-    this.displayContent = props.currentEmail.displayContent.find(email => email.type === 'text/html').value;
-    this.attachments = props.currentEmail.attachments || [];
-  }
+  const attachments = mailContext.attachments || [];
 
-  handleClick = () => {
-    this.props.hide();
-  };
+  const contentWithAttachedAttachments = attachments
+    .filter(attachment => attachment.disposition === 'inline')
+    .reduce((prevContent, attachment) => {
+      return prevContent.replace(
+        `cid:${attachment.content_id}`,
+        `data:${attachment.type};base64, ${attachment.content}`
+      );
+    }, content);
 
-  showCidImageInMail = (attachment) => {
-    this.displayContent = this.displayContent.replace(`cid:${attachment.content_id}`, `data:${attachment.type};base64, ${attachment.content}`);
-  };
+  return (
+    <div
+      dangerouslySetInnerHTML={{ __html: contentWithAttachedAttachments }}
+    />
+  );
+};
 
-  render() {
-    this.attachments
-      .filter(attachment => attachment.disposition == 'inline')
-      .forEach(attachment => this.showCidImageInMail(attachment));
+const TemplateContent = (templateId, personalizations) => {
+  return (
+    <div>
+      <b>{templateId}</b>
 
-    return (
-      <div className="modal">
-        <div className="modal_content">
-          <span
-            className="close"
-            style={{ float: 'right', fontSize: '50px', marginRight: '20px' }}
-            onClick={this.handleClick}
-          >
-            &times;
-          </span>
-          <div dangerouslySetInnerHTML={{ __html: this.displayContent }} />
-        </div>
+      <div>
+        {
+          (personalizations || [])
+            .map((p, index) => {
+              return (
+                <div key={index}>
+                  <div>
+                    <b>to:</b>
+                  </div>
+
+                  <div>
+                    <ul>
+                      {p.to.map(to => (<li key={to.email}>{to.email}</li>))}
+                    </ul>
+                  </div>
+
+                  <div>
+                    <b>template data:</b>
+                  </div>
+
+                  <div>
+                    {JSON.stringify(p.dynamic_template_data)}
+                  </div>
+                </div>
+              );
+            })
+        }
       </div>
+    </div>
+  );
+};
+
+const PopUp = (props) => {
+
+  const contentRenderer = {
+    'text/plain': SimpleContent,
+    'text/html': HtmlContent,
+  };
+
+  const renderCloseButton = () => {
+    return (
+      <span
+        className="close"
+        style={{ float: 'right', fontSize: '50px', marginRight: '20px' }}
+        onClick={props.hide}
+      >
+        &times;
+      </span>
     );
-  }
-}
+  };
+
+  const renderContent = (type, content, mailContext) => {
+    const renderer = contentRenderer[type];
+
+    if (renderer) {
+      return renderer(content, mailContext);
+    } else {
+      return <div>{''}</div>;
+    }
+  };
+
+  const renderDisplayContent = (displayContent) => {
+    if (Array.isArray(displayContent)) {
+      return (
+        <div>
+          {displayContent.map((content, index) => (
+            <div key={index}>
+              {
+                renderContent(
+                  content.type,
+                  content.value,
+                  props.currentEmail
+                )
+              }
+            </div>
+          ))}
+        </div>
+      );
+    } else {
+      return <div>{''}</div>;
+    }
+  };
+
+  return (
+    <div className="modal">
+      <div className="modal_content">
+
+        {renderCloseButton()}
+
+        {props.currentEmail.template_id ?
+          TemplateContent(
+            props.currentEmail.template_id,
+            props.currentEmail.personalizations
+          ) :
+          renderDisplayContent(props.currentEmail.displayContent)
+        }
+
+      </div>
+    </div>
+  );
+};
+
+export default PopUp;
