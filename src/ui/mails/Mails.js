@@ -174,9 +174,9 @@ class Mails extends React.Component {
                   {cellData.value.template_id
                     ? <a onClick={() => setCurrentEmail(cellData.value)}><b>Show template</b></a>
                     : <span>
-                        <a onClick={() => setCurrentEmail(cellData.value, 'text/plain')}><b>Show plain text email</b></a>&nbsp;|&nbsp;
-                        <a onClick={() => setCurrentEmail(cellData.value, 'text/html')}><b>Show html email</b></a>&nbsp;<br />
-                      </span>
+                      <a onClick={() => setCurrentEmail(cellData.value, 'text/plain')}><b>Show plain text email</b></a>&nbsp;|&nbsp;
+                      <a onClick={() => setCurrentEmail(cellData.value, 'text/html')}><b>Show html email</b></a>&nbsp;<br />
+                    </span>
                   }
                 </div>
               )
