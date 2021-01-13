@@ -83,19 +83,21 @@ class Mails extends React.Component {
   }
 
   render() {
-    const setCurrentEmail = email => {
+    const setCurrentEmail = (email, type) => {
       this.state.currentEmail = email;
+      this.state.type = type;
       this.forceUpdate();
     };
 
     const hide = () => {
       this.state.currentEmail = null;
+      this.state.type = null;
       this.forceUpdate();
     };
 
     const data = this.state.mails;
     const currentEmail = this.state.currentEmail;
-
+    const selectedEmailType = this.state.type;
 
     return <div>
       <div style={{ textAlign: 'right' }}>
@@ -110,7 +112,7 @@ class Mails extends React.Component {
         <a href='#' onClick={this.refresh}>Refresh</a>
       </div>
 
-      {currentEmail ? <PopUp currentEmail={currentEmail} hide={hide} /> : null}
+      {currentEmail ? <PopUp currentEmail={currentEmail} hide={hide} selectedEmailType={selectedEmailType} /> : null}
 
       <ReactTable
         style={{ marginTop: '12px' }}
@@ -169,7 +171,8 @@ class Mails extends React.Component {
               accessor: mail => mail,
               Cell: cellData => (
                 <div>
-                  <a onClick={() => setCurrentEmail(cellData.value)}><b>Show email</b></a>&nbsp;<br />
+                  <a onClick={() => setCurrentEmail(cellData.value, 'text/plain')}><b>Show plain text email</b></a>&nbsp;|&nbsp;
+                  <a onClick={() => setCurrentEmail(cellData.value, 'text/html')}><b>Show html email</b></a>&nbsp;<br />
                 </div>
               )
             }
