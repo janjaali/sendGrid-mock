@@ -5,6 +5,7 @@ const SimpleContent = (content) => {
 };
 
 const HtmlContent = (content, mailContext) => {
+
   const attachments = mailContext.attachments || [];
 
   const contentWithAttachedAttachments = attachments
@@ -61,8 +62,6 @@ const TemplateContent = (templateId, personalizations) => {
 };
 
 const PopUp = (props) => {
-
-  console.log(props);
 
   const contentRenderer = {
     'text/plain': SimpleContent,

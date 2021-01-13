@@ -112,7 +112,7 @@ class Mails extends React.Component {
         <a href='#' onClick={this.refresh}>Refresh</a>
       </div>
 
-      {currentEmail ? <PopUp currentEmail={currentEmail} hide={hide} selectedEmailType={selectedEmailType} /> : null}
+      {currentEmail ? <PopUp currentEmail={currentEmail} selectedEmailType={selectedEmailType} hide={hide}/> : null}
 
       <ReactTable
         style={{ marginTop: '12px' }}
@@ -171,8 +171,13 @@ class Mails extends React.Component {
               accessor: mail => mail,
               Cell: cellData => (
                 <div>
-                  <a onClick={() => setCurrentEmail(cellData.value, 'text/plain')}><b>Show plain text email</b></a>&nbsp;|&nbsp;
-                  <a onClick={() => setCurrentEmail(cellData.value, 'text/html')}><b>Show html email</b></a>&nbsp;<br />
+                  {cellData.value.template_id
+                    ? <a onClick={() => setCurrentEmail(cellData.value)}><b>Show template</b></a>
+                    : <span>
+                        <a onClick={() => setCurrentEmail(cellData.value, 'text/plain')}><b>Show plain text email</b></a>&nbsp;|&nbsp;
+                        <a onClick={() => setCurrentEmail(cellData.value, 'text/html')}><b>Show html email</b></a>&nbsp;<br />
+                      </span>
+                  }
                 </div>
               )
             }
