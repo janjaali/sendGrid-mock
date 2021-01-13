@@ -90,11 +90,11 @@ const PopUp = (props) => {
     }
   };
 
-  const renderDisplayContent = (displayContent) => {
+  const renderDisplayContent = (displayContent, selectedEmailType) => {
     if (Array.isArray(displayContent)) {
       return (
         <div>
-          {displayContent.map((content, index) => (
+          {displayContent.filter(content => content.type === selectedEmailType).map((content, index) => (
             <div key={index}>
               {
                 renderContent(
@@ -123,7 +123,7 @@ const PopUp = (props) => {
             props.currentEmail.template_id,
             props.currentEmail.personalizations
           ) :
-          renderDisplayContent(props.currentEmail.displayContent)
+          renderDisplayContent(props.currentEmail.displayContent, props.selectedEmailType)
         }
 
       </div>
