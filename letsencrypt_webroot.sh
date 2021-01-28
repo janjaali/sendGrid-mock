@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 # If the following environment variables are set, certbot will try to generate a new SSL certificate for your domain.
 # A certificate renewal chronjob will also be created.
