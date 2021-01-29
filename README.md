@@ -64,3 +64,5 @@ The server is based on [node]/[express]. [React] is used for the UI.
 1. Git tag released version: `git tag -a v1.6.0 -m "Release v1.6.0"`
 
 1. Git push tag: `git push origin master --tags`
+
+1. Add changelog information to git tag in GitHub
