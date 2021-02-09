@@ -13,6 +13,7 @@ class Mails extends React.Component {
       currentEmail: null,
       subject: queryParams.get('subject') || '',
       to: queryParams.get('to') || '',
+      dateTimeSince: queryParams.get('dateTimeSince') || '',
     };
 
     this.lastQuery = '';
@@ -55,6 +56,10 @@ class Mails extends React.Component {
     if (this.state.subject.length > 3) {
       apiParams.set('subject', `%${this.state.subject}%`);
     }
+    if(this.state.dateTimeSince.length > 4) {
+      apiParams.set('dateTimeSince', `${this.state.dateTimeSince}`);
+    }
+
 
     if (apiParams.toString() == this.lastQuery) return;
 
