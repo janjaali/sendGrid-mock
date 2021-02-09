@@ -29,12 +29,12 @@ SendGrid-Mock provides the following functionalities:
 The SendGrid-Mock server and the UI are both contained in the same docker-image which you can pull from [docker-hub](https://cloud.docker.com/u/ghashange/repository/docker/ghashange/sendgrid-mock) and start it via:
 
 ```shell
-docker run -it -p 3000:3000 -e "API_KEY=sendgrid-api-key" ghashange/sendgrid-mock:1.5.0
+docker run -it -p 3000:3000 -e "API_KEY=sendgrid-api-key" ghashange/sendgrid-mock:1.6.0
 ```
 
 Sendgrid mock also supports SSL using [Let's Encrypt](https://letsencrypt.org/). To enable SSL, run it as follows:
 ```shell
-docker run -it -p 3000:3000 -e "API_KEY=sendgrid-api-key" -e "CERT_DOMAINNAMES=[your-domain-name]" -e "CERT_EMAIL=[your-email-address]" ghashange/sendgrid-mock:1.5.0
+docker run -it -p 3000:3000 -e "API_KEY=sendgrid-api-key" -e "CERT_DOMAINNAMES=[your-domain-name]" -e "CERT_EMAIL=[your-email-address]" ghashange/sendgrid-mock:1.6.0
 ```
 
 Example calls are attached in [https-calls](./http-calls).
@@ -55,12 +55,14 @@ The server is based on [node]/[express]. [React] is used for the UI.
 
 1. Update version number in [package.json](./package.json) and [README.md](./README.md)
 
-1. Build docker image: `docker build -t ghashange/sendgrid-mock:1.5.0 .`
+1. Build docker image: `docker build -t ghashange/sendgrid-mock:1.6.0 .`
 
-1. Git commit changes: `git commit -m "Release v1.5.0."`
+1. Git commit changes: `git commit -m "Release v1.6.0."`
 
-1. Push built docker image to [dockerhub](https://hub.docker.com/): `docker push ghashange/sendgrid-mock:1.5.0`
+1. Push built docker image to [dockerhub](https://hub.docker.com/): `docker push ghashange/sendgrid-mock:1.6.0`
 
-1. Git tag released version: `git tag -a v1.5.0 -m "Release v1.5.0"`
+1. Git tag released version: `git tag -a v1.6.0 -m "Release v1.6.0"`
 
 1. Git push tag: `git push origin master --tags`
+
+1. Add changelog information to git tag in GitHub
