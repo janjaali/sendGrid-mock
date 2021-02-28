@@ -1,6 +1,6 @@
 {
   "name": "sendgrid-mock",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "description": "SendGrid API mock",
   "scripts": {
     "test": "jest",
