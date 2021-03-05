@@ -48,7 +48,7 @@ EXPOSE 443
 EXPOSE 3000
 
 # Set all environment variables
-ENV DOCKER_BUILD="false
+ENV DOCKER_BUILD="false"
 ENV NODE_ENV=production
 ENV API_KEY=sendgrid-api-key
 
