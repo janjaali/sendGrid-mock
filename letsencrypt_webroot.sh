@@ -4,6 +4,9 @@
 # A certificate renewal chronjob will also be created.
 if [ $CERT_DOMAINNAMES ] && [ $CERT_EMAIL ]; then
 
+    # Wait for DNS to be mapped to IP and docker container to be fully started
+    echo "Waiting for DNS to be mapped ..."
+    sleep 60
     # Generate the initial letsencrypt / certbot SSL certificate using the webroot method.
     # This method will send a challenge to this server's http port 80.
     # If the response is valid, certbot will put the generated SSL certificates in the following directory: /etc/letsencrypt/live/$SUBDOMAIN.$DOMAIN/
