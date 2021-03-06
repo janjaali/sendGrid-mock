@@ -12,10 +12,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Set env
+      - name: Determine release version
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/v}" >> $GITHUB_ENV
-      
-      - name: Test
-        run: |
-          echo $RELEASE_VERSION
-          echo ${{ env.RELEASE_VERSION }}
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1 
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push Docker images
+        uses: docker/build-push-action@v2.3.0
+        with:
+          push: true
+          tags: ghashange/sendgrid-mock:${{ env.RELEASE_VERSION }}
