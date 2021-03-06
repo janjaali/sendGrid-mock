@@ -55,13 +55,9 @@ The server is based on [node]/[express]. [React] is used for the UI.
 
 1. Update version number in [package.json](./package.json) and [README.md](./README.md)
 
-1. Build docker image: `docker build -t ghashange/sendgrid-mock:1.7.1 .`
+1. Git commit changes: `git commit -m "Release v1.7.2."`
 
-1. Git commit changes: `git commit -m "Release v1.7.1."`
-
-1. Push built docker image to [dockerhub](https://hub.docker.com/): `docker push ghashange/sendgrid-mock:1.7.1`
-
-1. Git tag released version: `git tag -a v1.7.1 -m "Release v1.7.1"`
+1. Git tag released version: `git tag -a v1.7.2 -m "Release v1.7.2"`
 
 1. Git push tag: `git push origin master --tags`
 
