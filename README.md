@@ -29,12 +29,13 @@ SendGrid-Mock provides the following functionalities:
 The SendGrid-Mock server and the UI are both contained in the same docker-image which you can pull from [docker-hub](https://cloud.docker.com/u/ghashange/repository/docker/ghashange/sendgrid-mock) and start it via:
 
 ```shell
-docker run -it -p 3000:3000 -e "API_KEY=sendgrid-api-key" ghashange/sendgrid-mock:1.7.2
+docker run -it -p 3000:3000 -e "API_KEY=sendgrid-api-key" ghashange/sendgrid-mock:1.8.0-SNAPSHOT
 ```
 
 Sendgrid mock also supports SSL using [Let's Encrypt](https://letsencrypt.org/). To enable SSL, run it as follows:
+
 ```shell
-docker run -it -p 3000:3000 -e "API_KEY=sendgrid-api-key" -e "CERT_DOMAINNAMES=[your-domain-name]" -e "CERT_EMAIL=[your-email-address]" ghashange/sendgrid-mock:1.7.2
+docker run -it -p 3000:3000 -e "API_KEY=sendgrid-api-key" -e "CERT_DOMAINNAMES=[your-domain-name]" -e "CERT_EMAIL=[your-email-address]" ghashange/sendgrid-mock:1.8.0-SNAPSHOT
 ```
 
 Example calls are attached in [https-calls](./http-calls).
@@ -50,6 +51,10 @@ The server is based on [node]/[express]. [React] is used for the UI.
 [express]: http://expressjs.com/
 [node]: https://nodejs.org/
 [React]: https://reactjs.org/
+
+## Build
+
+Create docker image with `docker build -t ghashange/sendgrid-mock:1.8.0-SNAPSHOT .`.
 
 ## Release
 
