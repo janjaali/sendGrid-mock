@@ -60,9 +60,9 @@ Create docker image with `docker build -t ghashange/sendgrid-mock:1.8.0-SNAPSHOT
 
 1. Update version number in [package.json](./package.json) and [README.md](./README.md)
 
-1. Git commit changes: `git commit -m "Release v1.7.2."`
+1. Git commit changes: `git commit -m "Release v1.8.0."`
 
-1. Git tag released version: `git tag -a v1.7.2 -m "Release v1.7.2"`
+1. Git tag released version: `git tag -a v1.8.0 -m "Release v1.8.0"`
 
 1. Git push tag: `git push origin master --tags`
 
