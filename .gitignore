@@ -2,7 +2,7 @@
 node_modules
 
 # parcel
-.cache
+.parcel-cache
 dist
 
 # VS Code
