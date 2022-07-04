@@ -9,7 +9,9 @@
   "scripts": {
     "lint": "eslint src",
     "test": "jest",
-    "dev": "cross-env API_KEY=sendgrid-api-key MAIL_HISTORY_DURATION=PT24H node ./src/server/Server.js",
+    "server-dev": "cross-env API_KEY=sendgrid-api-key MAIL_HISTORY_DURATION=PT24H node ./src/server/Server.js",
+    "ui-dev": "parcel ./src/ui/index.html",
+    "dev": "concurrently \"npm run server-dev\" \"npm run ui-dev\"",
     "build": "parcel build ./src/ui/index.html"
   },
   "author": "janjaali",
@@ -29,11 +31,13 @@
   },
   "devDependencies": {
     "babel-eslint": "^10.0.2",
+    "concurrently": "^7.2.2",
     "cross-env": "^7.0.3",
     "eslint": "^6.8.0",
     "eslint-plugin-react": "^7.14.3",
     "jest": "^26.6.3",
     "parcel": "^2.6.0",
+    "process": "^0.11.10",
     "sinon": "^14.0.0",
     "supertest": "^6.0.1"
   }
