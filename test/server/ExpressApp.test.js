@@ -37,7 +37,7 @@ describe('App', () => {
       const sut = setupExpressApp(mailHandlerStub, {enabled: false}, 'sonic');
 
       const response = await request(sut).post('/v3/mail/send');
-      expect(response.statusCode).toBe(200);        
+      expect(response.statusCode).toBe(403);        
     });
 
     test('pass through authenticated user ', async () => {
