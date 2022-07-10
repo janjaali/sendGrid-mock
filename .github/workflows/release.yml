@@ -10,8 +10,7 @@ jobs:
   release:
     if: |
       github.event.pull_request.merged == true &&
-      github.event.pull_request.base.ref == 'master' &&
-      contains(github.event.pull_request.labels.*.name, 'release')
+      github.event.pull_request.base.ref == 'master'
     runs-on: ubuntu-latest
     steps:
       - name: Set variables
