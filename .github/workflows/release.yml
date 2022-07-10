@@ -17,6 +17,9 @@ jobs:
         id: getversion
         run: echo ::set-output name=release_version::$(cat version)
 
+      - name: Test version
+        run: echo ${{ steps.getversion.outputs.release_version }}
+
       - name: Checkout
         uses: actions/checkout@v2
 
