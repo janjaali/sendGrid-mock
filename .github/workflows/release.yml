@@ -13,15 +13,16 @@ jobs:
     #   github.event.pull_request.base.ref == 'master'
     runs-on: ubuntu-latest
     steps:
-      - name: Get version
-        id: getversion
-        run: echo ::set-output name=release_version::$(cat ./version)
-
-      - name: Test version
-        run: echo ${{ steps.getversion.outputs.release_version }}
-
       - name: Checkout
         uses: actions/checkout@v2
+
+      - name: Get version
+        run: |
+          VERSION=$(cat ./version)
+          echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Log release version
+        run: echo ${{ env.RELEASE_VERSION }}
 
       - name: Login to DockerHub
         uses: docker/login-action@v1
@@ -33,4 +34,4 @@ jobs:
         uses: docker/build-push-action@v2.3.0
         with:
           push: true
-          tags: ghashange/sendgrid-mock:${{ steps.getversion.outputs.release_version }}
+          tags: ghashange/sendgrid-mock:${{ env.RELEASE_VERSION }}
