@@ -33,11 +33,12 @@ const app = setupExpressApp(mailHandler, apiAuthentication, process.env.API_KEY)
 
 if (enableSsl) {
 
-  logger.info('Starting service with letsencrypt.org integration (use https)!');
+  logger.info('Starting send-grid mock with letsencrypt.org integration (use https)!');
   asHttpsServer(app);
 } else {
 
   const serverPort = 3000;
-  logger.info(`Starting service on port ${serverPort}!`);
   app.listen(serverPort);
+
+  logger.info(`Started sendgrid-mock on port ${serverPort}!`);
 }
