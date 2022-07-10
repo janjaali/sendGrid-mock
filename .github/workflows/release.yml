@@ -13,10 +13,9 @@ jobs:
     #   github.event.pull_request.base.ref == 'master'
     runs-on: ubuntu-latest
     steps:
-      - name: Set variables
-        run: |
-          VERSION=$(cat version)
-          echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV
+      - name: Get version
+        id: getversion
+        run: echo ::set-output name=release_version::$(cat version)
 
       - name: Checkout
         uses: actions/checkout@v2
@@ -31,4 +30,4 @@ jobs:
         uses: docker/build-push-action@v2.3.0
         with:
           push: true
-          tags: ghashange/sendgrid-mock:${{ env.RELEASE_VERSION }}
+          tags: ghashange/sendgrid-mock:${{ steps.getversion.outputs.release_version }}
