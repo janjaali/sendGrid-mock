@@ -1,22 +1,29 @@
 name: Release
 
 on:
-  push:
-    tags:
-      - 'v*.*.*'
+  - push
+  # pull_request:
+  #   types:
+  #     - closed
 
 jobs:
   release:
+    if: |
+      github.event.pull_request.merged == true &&
+      github.event.pull_request.base.ref == 'master' &&
+      contains(github.event.pull_request.labels.*.name, 'release')
     runs-on: ubuntu-latest
     steps:
+      - name: Set variables
+        run: |
+          VERSION=$(cat version)
+          echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV
+
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Determine release version
-        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/v}" >> $GITHUB_ENV
-
       - name: Login to DockerHub
-        uses: docker/login-action@v1 
+        uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
