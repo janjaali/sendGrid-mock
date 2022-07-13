@@ -1,6 +1,9 @@
+# npm
 node_modules
 
-.cache
-.vscode
-
+# parcel
+.parcel-cache
 dist
+
+# VS Code
+.vscode

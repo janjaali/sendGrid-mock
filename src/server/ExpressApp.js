@@ -61,7 +61,7 @@ const setupExpressApp = (mailHandler, apiAuthentication, mockedApiAuthentication
   
     mailHandler.clear(filterCriteria);
   
-    res.send(202);
+    res.sendStatus(202);
   });
   
   app.use(express.static(path.join(__dirname, '../../dist')));
