@@ -22,10 +22,26 @@ class Mails extends React.Component {
     this._filterEmailTo = this._filterEmailTo.bind(this);
     this._filterEmailSubject = this._filterEmailSubject.bind(this);
     this._fetchMails = this._fetchMails.bind(this);
+    this.deleteAllMails = this.deleteAllMails.bind(this);
   }
 
   componentDidMount() {
     this._fetchMails();
+  }
+
+  deleteAllMails() {
+    
+    console.info('Command to delete all mails.');
+
+    fetch('/api/mails', {method: 'DELETE'})
+      .then(response => {
+        if (response.status === 202) {
+          console.info('All mails were deleted.');
+          this.setState({ mails: [] });
+        } else {
+          console.error('Failed to delete all mails.', response);
+        }
+      });
   }
 
   refresh() {
@@ -190,6 +206,10 @@ class Mails extends React.Component {
         }]}
         className="-striped -highlight"
       />
+
+      <div style={{ textAlign: 'right', marginTop: '12px' }}>
+        <a href='#' onClick={this.deleteAllMails}>Delete all</a>
+      </div>
     </div>;
   }
 }
