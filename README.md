@@ -4,6 +4,8 @@
 
 SendGrid-Mock serves as a simple server mocking the sendgrid-apis for development purposes.
 
+![./assets/screenshot_1.8.0.png](./assets/screenshot_1.8.0.png)
+
 SendGrid-Mock provides the following functionalities:
 
 * Send mails to a mocked sendgrid-api (v3: `POST /v3/mail/send`)
