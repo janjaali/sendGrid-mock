@@ -138,7 +138,9 @@ class Mails extends React.Component {
       <ReactTable
         style={{ marginTop: '12px' }}
         data={data}
-        showPageSizeOptions={false}
+        showPageSizeOptions= {true}
+        pageSizeOptions= {[10, 20, 50, 100]}
+        defaultPageSize= {10}
         columns={[{
           Header: 'Mails',
           columns: [
