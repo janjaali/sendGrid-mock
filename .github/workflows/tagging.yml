@@ -3,7 +3,7 @@ on:
   push:
 
 jobs:
-  build:
+  tag:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -22,3 +22,7 @@ jobs:
           custom_tag: ${{ env.RELEASE_VERSION }}
           create_annotated_tag: true
           tag_prefix: v
+
+      - name: Fail if version tag was not pushed
+        if: ${{ steps.tag_version.outputs.new_tag }} = undefined
+        run: exit 1
