@@ -14,16 +14,14 @@ jobs:
           VERSION=$(cat ./version)
           echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV
 
-      - name: Validate version does not yet exists
-        uses: mukunku/tag-exists-action@v1.0.0
+      - uses: bbonkr/git-tag-check-action@v1.0.10
         id: validateTag
-        with: 
-          tag: ${{ env.RELEASE_VERSION }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          tag: v${{ env.RELEASE_VERSION }}
 
       - name: Fail if version tag was not pushed
-        if: ${{ steps.checkTag.outputs.exists }}
+        if: ${{ steps.validateTag.outputs.tag != '' }} 
         run: exit 1
 
       - name: Push version tag
