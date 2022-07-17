@@ -23,6 +23,9 @@ jobs:
           create_annotated_tag: true
           tag_prefix: v
 
+      - name: Log pushed version tag
+        run: echo ${{ toJSON(steps.tag_version.outputs.new_tag) }}
+
       - name: Fail if version tag was not pushed
         if: ${{ steps.tag_version.outputs.new_tag }} == undefined
         run: exit 1
