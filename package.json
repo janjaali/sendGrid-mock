@@ -29,7 +29,7 @@
   "license": "MIT",
   "dependencies": {
     "body-parser": "^1.18.3",
-    "express": "^4.16.4",
+    "express": "^4.17.3",
     "express-basic-auth": "^1.2.0",
     "log4js": "^6.4.0",
     "react": "^16.7.0",
