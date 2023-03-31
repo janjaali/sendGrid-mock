@@ -43,7 +43,7 @@
     "eslint": "^8.0.0",
     "eslint-plugin-react": "^7.14.3",
     "jest": "^27.0.0",
-    "parcel": "^2.6.0",
+    "parcel": "^2.6.2",
     "process": "^0.11.10",
     "sinon": "^14.0.0",
     "supertest": "^6.0.1"
