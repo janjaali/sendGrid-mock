@@ -13,26 +13,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Get version
         run: |
           VERSION=$(cat ./version)
           echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV
 
-      - uses: bbonkr/git-tag-check-action@v1.0.10
+      - uses: bbonkr/git-tag-check-action@v1.0.18
         id: validateTag
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           tag: v${{ env.RELEASE_VERSION }}
 
-      - name: Fail if version tag was not pushed
+      - name: Fail if version tag already exists
         if: ${{ steps.validateTag.outputs.tag != '' }}
         run: exit 1
 
-      - name: Push version tag
+      - name: Push version tag to repository
         id: tag_version
-        uses: mathieudutour/github-tag-action@v6.0
+        uses: mathieudutour/github-tag-action@v6.1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           custom_tag: ${{ env.RELEASE_VERSION }}
@@ -40,13 +40,13 @@ jobs:
           tag_prefix: v
 
       - name: Login to DockerHub
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push Docker images
-        uses: docker/build-push-action@v2.3.0
+        uses: docker/build-push-action@v4
         with:
           push: true
           tags: ghashange/sendgrid-mock:${{ env.RELEASE_VERSION }}
