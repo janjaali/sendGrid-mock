@@ -50,7 +50,7 @@ const mailSentTo = (mail, to) => {
     
     const matcherFn = to.startsWith('%') && to.endsWith('%')
       ? string => string.toLowerCase().includes(to.substring(1, to.length -1).toLowerCase())
-      : string => string.toLowerCase() == to.toLowerCase();
+      : string => string.toLowerCase() === to.toLowerCase();
 
     return mail
       .personalizations

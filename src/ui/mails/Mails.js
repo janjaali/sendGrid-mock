@@ -77,7 +77,7 @@ class Mails extends React.Component {
     }
 
 
-    if (apiParams.toString() == this.lastQuery) return;
+    if (apiParams.toString() === this.lastQuery) return;
 
     this.lastQuery = apiParams.toString();
     fetch(`/api/mails?${this.lastQuery}`)
