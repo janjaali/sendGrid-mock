@@ -62,15 +62,19 @@ const mailSentTo = (mail, to) => {
 };
 
 const mailContainSubject = (mail, subject) => {
-  
-  const actualSubject = mail.subject;
-  
-  if (subject.startsWith('%') && subject.endsWith('%')) {
-    const searchSubject = subject.substring(1, subject.length - 1);
-    return actualSubject.toLowerCase().includes(searchSubject.toLowerCase());
+
+  if (Array.isArray(mail.personalizations)) {
+
+    const matcherFn = subject.startsWith('%') && subject.endsWith('%')
+        ? string => string.toLowerCase().includes(subject.substring(1, subject.length -1).toLowerCase())
+        : string => string.toLowerCase() === subject.toLowerCase();
+
+    return mail
+        .personalizations
+        .some(subject => matcherFn(subject.subject));
   } else {
-    return actualSubject.toLowerCase() === subject.toLowerCase();
-  }  
+    return false;
+  }
 };
 
 const mailSentAfter = (mail, dateTime) => {

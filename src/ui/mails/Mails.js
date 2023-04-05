@@ -171,7 +171,15 @@ class Mails extends React.Component {
                   headerStyle: { textAlign: 'left' },
                   style: { 'whiteSpace': 'unset' },
                   minWidth: 200,
-                  accessor: mail => mail.subject
+                  accessor: mail => mail.personalizations,
+                  Cell: cellData => (
+                      cellData.value
+                          .filter(value => !!value.subject)
+                          .map(value => (
+                              <div key={value.subject}>
+                                <span>{value.subject}</span>
+                              </div>)
+                          ))
                 },
                 {
                   Header: 'to',
