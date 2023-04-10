@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const path = require('path');
 const express = require('express');
 const basicAuth = require('express-basic-auth');
@@ -50,7 +51,9 @@ const setupExpressApp = (
       
       mailHandler.addMail(req.body);
   
-      res.sendStatus(202);
+      res.status(202).header({
+        'X-Message-ID': crypto.randomUUID(),
+      }).send();
     } else {
       res.status(403).send({
         errors: [{

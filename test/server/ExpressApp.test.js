@@ -10,7 +10,7 @@ describe('App', () => {
 
   describe('POST /v3/mail/send', () => {
 
-    test('add mails', async () => {
+    test('adds mails', async () => {
 
       const mail = {mail: 'important'};
 
@@ -30,6 +30,28 @@ describe('App', () => {
         .set('Authorization', 'Bearer sonic');
       
       expect(response.statusCode).toBe(202);
+    });
+
+    test('responds with x-message-id header', async () => {
+
+      const mail = {mail: 'important'};
+
+      const mailHandlerStub = sinon.createStubInstance(MailHandler);
+      mailHandlerStub
+        .addMail
+        .withArgs(
+          sinon.match(mail) 
+        )
+        .returns(undefined);
+      
+      const sut = setupExpressApp(mailHandlerStub, { enabled: false }, 'sonic', rateLimitConfiguration);
+
+      const response = await request(sut)
+        .post('/v3/mail/send')
+        .send(mail)
+        .set('Authorization', 'Bearer sonic');
+      
+      expect(response.headers['x-message-id']).toBeDefined();
     });
 
     test('blocks not authenticated user ', async () => {
