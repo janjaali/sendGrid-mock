@@ -31,6 +31,14 @@ SendGrid-Mock serves as a simple server mocking the sendgrid-apis for developmen
 
 * Basic authentication support: Add basic authentication credentials by specifying environment variable `AUTHENTICATION` to the following format: `user1:passwordForUser1;user2:passwordForUser2`
 
+* Request rate limiting: Both the actual SendGrid API server as well as the SSL server can be rate limited by specifying environment variables:
+  * `RATE_LIMIT_ENABLED`: `true` or `false` (default)
+  * `RATE_LIMIT_WINDOW_IN_MS`: The time window in milliseconds (default: `60000`)
+  * `RATE_LIMIT_MAX_REQUESTS`: The maximum number of requests allowed in the time window (default: `100`)
+  * `SSL_RATE_LIMIT_ENABLED`: `true` or `false` (default)
+  * `SSL_RATE_LIMIT_WINDOW_IN_MS`: The time window in milliseconds (default: `60000`)
+  * `SSL_RATE_LIMIT_MAX_REQUESTS`: The maximum number of requests allowed in the time window (default: `100`)
+
 * By default, all emails older than 24 hours will be deleted. This can be configured using environment variable `MAIL_HISTORY_DURATION` which uses [ISO-8601 Duration format](https://en.wikipedia.org/wiki/ISO_8601#Durations) such as *'PT24H'*.
 
 ## Dockerized

@@ -4,6 +4,8 @@ const sinon = require('sinon');
 const {setupExpressApp} = require('../../src/server/ExpressApp');
 const MailHandler = require('../../src/server/handler/MailHandler');
 
+const rateLimitConfiguration = {enabled: false};
+
 describe('App', () => {
 
   describe('POST /v3/mail/send', () => {
@@ -20,7 +22,7 @@ describe('App', () => {
         )
         .returns(undefined);
       
-      const sut = setupExpressApp(mailHandlerStub, { enabled: false }, 'sonic');
+      const sut = setupExpressApp(mailHandlerStub, { enabled: false }, 'sonic', rateLimitConfiguration);
 
       const response = await request(sut)
         .post('/v3/mail/send')
@@ -34,7 +36,7 @@ describe('App', () => {
 
       const mailHandlerStub = sinon.createStubInstance(MailHandler);
 
-      const sut = setupExpressApp(mailHandlerStub, {enabled: false}, 'sonic');
+      const sut = setupExpressApp(mailHandlerStub, {enabled: false}, 'sonic', rateLimitConfiguration);
 
       const response = await request(sut).post('/v3/mail/send');
       expect(response.statusCode).toBe(403);        
@@ -44,7 +46,7 @@ describe('App', () => {
 
       const mailHandlerStub = sinon.createStubInstance(MailHandler);
 
-      const sut = setupExpressApp(mailHandlerStub, {enabled: false}, 'sonic');
+      const sut = setupExpressApp(mailHandlerStub, {enabled: false}, 'sonic', rateLimitConfiguration);
 
       const response = await request(sut)
         .post('/v3/mail/send')
@@ -68,7 +70,7 @@ describe('App', () => {
           )
           .returns(['mail']);
         
-        const sut = setupExpressApp(mailHandlerStub, { enabled: false });
+        const sut = setupExpressApp(mailHandlerStub, { enabled: false }, undefined, rateLimitConfiguration);
   
         const response = await request(sut).get(url);
         
@@ -112,7 +114,7 @@ describe('App', () => {
 
         const mailHandlerStub = sinon.createStubInstance(MailHandler);
 
-        const sut = setupExpressApp(mailHandlerStub, {enabled: true});
+        const sut = setupExpressApp(mailHandlerStub, {enabled: true}, undefined, rateLimitConfiguration);
   
         const response = await request(sut).get('/api/mails');
         expect(response.statusCode).toBe(401);        
@@ -124,7 +126,9 @@ describe('App', () => {
 
         const sut = setupExpressApp(
           mailHandlerStub, 
-          {enabled: true, users: {sonic: 'the password'}}
+          {enabled: true, users: {sonic: 'the password'}},
+          undefined,
+          rateLimitConfiguration,
         );
   
         const response = await request(sut)
@@ -149,7 +153,7 @@ describe('App', () => {
           )
           .returns(undefined);
         
-        const sut = setupExpressApp(mailHandlerStub, { enabled: false });
+        const sut = setupExpressApp(mailHandlerStub, { enabled: false }, undefined, rateLimitConfiguration);
   
         const response = await request(sut).delete(url);
         
@@ -176,7 +180,7 @@ describe('App', () => {
 
         const mailHandlerStub = sinon.createStubInstance(MailHandler);
 
-        const sut = setupExpressApp(mailHandlerStub, {enabled: true});
+        const sut = setupExpressApp(mailHandlerStub, {enabled: true}, undefined, rateLimitConfiguration);
   
         const response = await request(sut).delete('/api/mails');
         expect(response.statusCode).toBe(401);        
@@ -188,7 +192,9 @@ describe('App', () => {
 
         const sut = setupExpressApp(
           mailHandlerStub, 
-          {enabled: true, users: {sonic: 'the password'}}
+          {enabled: true, users: {sonic: 'the password'}},
+          undefined,
+          rateLimitConfiguration,
         );
   
         const response = await request(sut)
