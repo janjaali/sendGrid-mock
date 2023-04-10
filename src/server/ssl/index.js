@@ -6,6 +6,7 @@ const { loggerFactory } = require('../logger/log4js');
 const path = require('path');
 const { spawn } = require('child_process');
 const sanitize = require('sanitize-filename');
+const { rateLimit } = require('express-rate-limit');
 
 /** Binds an existing Express server application with SSL certificate to 
  * provide it via HTTPS using Certbot and Let's Encrypt. This implementation is 
@@ -58,9 +59,29 @@ const createAndStartHttpsServer = (expressApp, certificate) => {
   return httpsServer;
 };
 
-const asHttpsServer = (expressApp) => {
+const asHttpsServer = (expressApp, rateLimitConfiguration) => {
 
   const httpToHttpsForwardingExpressApp = express();
+
+  if (rateLimitConfiguration.enabled) {
+  
+    const rateLimitWindowInMs = rateLimitConfiguration.windowInMs;
+    const rateLimitMaxRequests = rateLimitConfiguration.maxRequests;
+  
+    logger.info(`Rate limit enabled with ${rateLimitMaxRequests} requests per ${rateLimitWindowInMs} ms.`);
+  
+    const definedRateLimit = rateLimit({
+      windowMs: rateLimitWindowInMs,
+      max: rateLimitMaxRequests,
+      standardHeaders: true,
+    });
+  
+    httpToHttpsForwardingExpressApp.use(definedRateLimit);  
+  
+  } else {
+    logger.warn('Rate limit is disabled!');
+  }
+
   httpToHttpsForwardingExpressApp.get('*', (req, res) => {
     return res.redirect(`https://${req.headers.host}${req.url}`);
   });

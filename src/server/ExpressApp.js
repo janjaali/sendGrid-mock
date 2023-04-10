@@ -1,11 +1,45 @@
+const crypto = require('crypto');
 const path = require('path');
 const express = require('express');
 const basicAuth = require('express-basic-auth');
 const bodyParser = require('body-parser');
+const { loggerFactory } = require('./logger/log4js');
+const { rateLimit } = require('express-rate-limit');
 
-const setupExpressApp = (mailHandler, apiAuthentication, mockedApiAuthenticationKey) => {
+const logger = loggerFactory('ExpressApp');
+
+const setupExpressApp = (
+  mailHandler, 
+  apiAuthentication, 
+  mockedApiAuthenticationKey, 
+  rateLimitConfiguration,
+) => {
 
   const app = express();
+
+  if (apiAuthentication.enabled) {
+
+    app.use(basicAuth({ challenge: true, users: apiAuthentication.users }));
+  }
+
+  if (rateLimitConfiguration.enabled) {
+  
+    const rateLimitWindowInMs = rateLimitConfiguration.windowInMs;
+    const rateLimitMaxRequests = rateLimitConfiguration.maxRequests;
+  
+    logger.info(`Rate limit enabled with ${rateLimitMaxRequests} requests per ${rateLimitWindowInMs} ms.`);
+  
+    const definedRateLimit = rateLimit({
+      windowMs: rateLimitWindowInMs,
+      max: rateLimitMaxRequests,
+      standardHeaders: true,
+    });
+  
+    app.use(definedRateLimit);  
+  
+  } else {
+    logger.warn('Rate limit is disabled!');
+  }
 
   app.use(bodyParser.json({ limit: '5mb' }));
 
@@ -17,7 +51,9 @@ const setupExpressApp = (mailHandler, apiAuthentication, mockedApiAuthentication
       
       mailHandler.addMail(req.body);
   
-      res.sendStatus(202);
+      res.status(202).header({
+        'X-Message-ID': crypto.randomUUID(),
+      }).send();
     } else {
       res.status(403).send({
         errors: [{
@@ -30,11 +66,6 @@ const setupExpressApp = (mailHandler, apiAuthentication, mockedApiAuthentication
     }
   });
   
-  if (apiAuthentication.enabled) {
-
-    app.use(basicAuth({ challenge: true, users: apiAuthentication.users }));
-  }
-
   app.get('/api/mails', (req, res) => {
 
     const filterCriteria = {
