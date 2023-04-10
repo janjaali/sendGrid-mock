@@ -5,6 +5,7 @@ const https = require('https');
 const { loggerFactory } = require('../logger/log4js');
 const path = require('path');
 const { spawn } = require('child_process');
+const sanitize = require('sanitize-filename');
 
 /** Binds an existing Express server application with SSL certificate to 
  * provide it via HTTPS using Certbot and Let's Encrypt. This implementation is 
@@ -68,10 +69,12 @@ const asHttpsServer = (expressApp) => {
   const webrootExpressApp = express();
   webrootExpressApp.get('/.well-known/acme-challenge/:fileName', (req, res) => {
 
+    const sanitizedFileName = sanitize(req.params.fileName);
+
     const filePath = path.join(
       '/usr/src/server',
       '.well-known/acme-challenge/',
-      req.params.fileName
+      sanitizedFileName
     );
 
     if (fs.existsSync(filePath)) {

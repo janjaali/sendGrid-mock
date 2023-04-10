@@ -1,6 +1,6 @@
 {
   "name": "sendgrid-mock",
-  "version": "1.8.0-SNAPSHOT",
+  "version": "1.8.1",
   "description": "SendGrid API mock",
   "engines": {
     "node": ">=16",
@@ -34,7 +34,8 @@
     "log4js": "^6.4.0",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
-    "react-table": "^6.9.0"
+    "react-table": "^6.9.0",
+    "sanitize-filename": "^1.6.3"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.2",
