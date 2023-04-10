@@ -62,6 +62,7 @@ const createAndStartHttpsServer = (expressApp, certificate) => {
 const asHttpsServer = (expressApp, rateLimitConfiguration) => {
 
   const httpToHttpsForwardingExpressApp = express();
+  const webrootExpressApp = express();
 
   if (rateLimitConfiguration.enabled) {
   
@@ -77,7 +78,7 @@ const asHttpsServer = (expressApp, rateLimitConfiguration) => {
     });
   
     httpToHttpsForwardingExpressApp.use(definedRateLimit);  
-  
+    webrootExpressApp.use(definedRateLimit);
   } else {
     logger.warn('Rate limit is disabled!');
   }
@@ -87,7 +88,6 @@ const asHttpsServer = (expressApp, rateLimitConfiguration) => {
   });
 
   // see https://eff-certbot.readthedocs.io/en/stable/using.html?highlight=well-known#webroot
-  const webrootExpressApp = express();
   webrootExpressApp.get('/.well-known/acme-challenge/:fileName', (req, res) => {
 
     const sanitizedFileName = sanitize(req.params.fileName);
