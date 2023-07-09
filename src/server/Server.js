@@ -55,7 +55,7 @@ if (enableSsl) {
   asHttpsServer(app, sslRateLimitConfiguration);
 } else {
 
-  const serverPort = 3000;
+  const serverPort = 3050;
   app.listen(serverPort);
 
   logger.info(`Started sendgrid-mock on port ${serverPort}!`);
