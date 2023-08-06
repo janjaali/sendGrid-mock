@@ -6,19 +6,39 @@ const MailHandler = require('../../src/server/handler/MailHandler');
 
 const rateLimitConfiguration = {enabled: false};
 
+const testMail = {
+  'personalizations': [
+    {
+      'to': [{
+        'email': 'to@example.com'
+      }, {
+        'email': 'to2@example.com'
+      }]
+    }
+  ],
+  'from': {
+    'email': 'from@example.com'
+  },
+  'subject': 'important subject',
+  'content': [
+    {
+      'type': 'text/html',
+      'value': 'even more important content containing a link <a href="http://example.com/path?query=value">http://example.com/path?query=value</a>'
+    }
+  ]
+};
+
 describe('App', () => {
 
   describe('POST /v3/mail/send', () => {
 
     test('adds mails', async () => {
 
-      const mail = {mail: 'important'};
-
       const mailHandlerStub = sinon.createStubInstance(MailHandler);
       mailHandlerStub
         .addMail
         .withArgs(
-          sinon.match(mail) 
+          sinon.match(testMail) 
         )
         .returns(undefined);
       
@@ -26,7 +46,7 @@ describe('App', () => {
 
       const response = await request(sut)
         .post('/v3/mail/send')
-        .send(mail)
+        .send(testMail)
         .set('Authorization', 'Bearer sonic');
       
       expect(response.statusCode).toBe(202);
@@ -34,13 +54,11 @@ describe('App', () => {
 
     test('responds with x-message-id header', async () => {
 
-      const mail = {mail: 'important'};
-
       const mailHandlerStub = sinon.createStubInstance(MailHandler);
       mailHandlerStub
         .addMail
         .withArgs(
-          sinon.match(mail) 
+          sinon.match(testMail) 
         )
         .returns(undefined);
       
@@ -48,7 +66,7 @@ describe('App', () => {
 
       const response = await request(sut)
         .post('/v3/mail/send')
-        .send(mail)
+        .send(testMail)
         .set('Authorization', 'Bearer sonic');
       
       expect(response.headers['x-message-id']).toBeDefined();
@@ -60,7 +78,7 @@ describe('App', () => {
 
       const sut = setupExpressApp(mailHandlerStub, {enabled: false}, 'sonic', rateLimitConfiguration);
 
-      const response = await request(sut).post('/v3/mail/send');
+      const response = await request(sut).post('/v3/mail/send').send(testMail);
       expect(response.statusCode).toBe(403);        
     });
 
@@ -72,6 +90,7 @@ describe('App', () => {
 
       const response = await request(sut)
         .post('/v3/mail/send')
+        .send(testMail)
         .set('Authorization', 'Bearer sonic');
 
       expect(response.statusCode).toBe(202);        
