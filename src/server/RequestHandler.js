@@ -30,6 +30,7 @@ const jsonSchema = {
           },
           name: {
             type: 'string',
+            nullable: true,
           },
         }
       },
