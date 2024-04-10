@@ -95,6 +95,67 @@ describe('App', () => {
 
       expect(response.statusCode).toBe(202);        
     });
+
+    test('accepts name as null', async () => {
+      const mailWithNameNull = {
+        ...testMail,
+        'from': {
+          'email': 'from@example.com',
+          'name': null
+        }
+      };
+  
+      const mailHandlerStub = sinon.createStubInstance(MailHandler);
+      const sut = setupExpressApp(mailHandlerStub, { enabled: false }, 'sonic', rateLimitConfiguration);
+  
+      const response = await request(sut)
+        .post('/v3/mail/send')
+        .send(mailWithNameNull)
+        .set('Authorization', 'Bearer sonic');
+  
+      expect(response.statusCode).toBe(202);
+    });
+  
+    test('accepts name as string', async () => {
+      const mailWithNameString = {
+        ...testMail,
+        'from': {
+          'email': 'from@example.com',
+          'name': 'Valid Name'
+        }
+      };
+  
+      const mailHandlerStub = sinon.createStubInstance(MailHandler);
+      const sut = setupExpressApp(mailHandlerStub, { enabled: false }, 'sonic', rateLimitConfiguration);
+  
+      const response = await request(sut)
+        .post('/v3/mail/send')
+        .send(mailWithNameString)
+        .set('Authorization', 'Bearer sonic');
+  
+      expect(response.statusCode).toBe(202);
+    });
+  
+    test('rejects name of incorrect type', async () => {
+      const mailWithInvalidName = {
+        ...testMail,
+        'from': {
+          'email': 'from@example.com',
+          'name': 123
+        }
+      };
+  
+      const mailHandlerStub = sinon.createStubInstance(MailHandler);
+      const sut = setupExpressApp(mailHandlerStub, { enabled: false }, 'sonic', rateLimitConfiguration);
+  
+      const response = await request(sut)
+        .post('/v3/mail/send')
+        .send(mailWithInvalidName)
+        .set('Authorization', 'Bearer sonic');
+  
+      expect(response.statusCode).toBe(400); 
+    });
+  
   });
 
   describe('GET /api/mails', () => {
