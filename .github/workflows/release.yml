@@ -4,12 +4,14 @@ on:
   pull_request:
     types:
       - closed
+  workflow_dispatch:
 
 jobs:
   release:
     if: |
-      github.event.pull_request.merged == true &&
-      github.event.pull_request.base.ref == 'master'
+      (github.event.pull_request.merged == true &&
+      github.event.pull_request.base.ref == 'master') ||
+      github.actor == 'janjaal'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
