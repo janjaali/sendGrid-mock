@@ -11,7 +11,7 @@ jobs:
     if: |
       (github.event.pull_request.merged == true &&
       github.event.pull_request.base.ref == 'master') ||
-      github.actor == 'janjaal'
+      github.actor == 'janjaali'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
