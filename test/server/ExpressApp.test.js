@@ -28,6 +28,22 @@ const testMail = {
   ]
 };
 
+const testMailWithTemplateId = {
+  'personalizations': [
+    {
+      'to': [{
+        'email': 'to@example.com'
+      }, {
+        'email': 'to2@example.com'
+      }]
+    }
+  ],
+  'from': {
+    'email': 'from@example.com'
+  },
+  'template_id': 'test-template-id'
+};
+
 describe('App', () => {
 
   describe('POST /v3/mail/send', () => {
@@ -47,6 +63,26 @@ describe('App', () => {
       const response = await request(sut)
         .post('/v3/mail/send')
         .send(testMail)
+        .set('Authorization', 'Bearer sonic');
+      
+      expect(response.statusCode).toBe(202);
+    });
+
+    test('adds mail with template ID', async () => {
+
+      const mailHandlerStub = sinon.createStubInstance(MailHandler);
+      mailHandlerStub
+        .addMail
+        .withArgs(
+          sinon.match(testMail) 
+        )
+        .returns(undefined);
+      
+      const sut = setupExpressApp(mailHandlerStub, { enabled: false }, 'sonic', rateLimitConfiguration);
+
+      const response = await request(sut)
+        .post('/v3/mail/send')
+        .send(testMailWithTemplateId)
         .set('Authorization', 'Bearer sonic');
       
       expect(response.statusCode).toBe(202);

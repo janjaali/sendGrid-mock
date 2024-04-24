@@ -5,7 +5,15 @@ const {Validator, ValidationError} = require('express-json-validator-middleware'
 const jsonSchema = {
   v3MailSend: {
     type: 'object',
-    required: ['personalizations', 'content', 'from', 'subject'],
+    required: ['personalizations', 'from'],
+    if: {
+      properties: {
+        template_id: { const: null }
+      }
+    },
+    then: {
+      required: ['content','subject']
+    },
     properties: {
       content: {
         type: 'array',
@@ -55,6 +63,10 @@ const jsonSchema = {
       },
       subject: {
         type: 'string',
+      },
+      template_id: {
+        type: 'string',
+        nullable: true,
       },
     }
   }
