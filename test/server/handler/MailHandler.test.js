@@ -1,5 +1,10 @@
 const {withMockedDate} = require('../../MockDate');
 
+const axios = require('axios');
+jest.mock('axios');
+
+const crypto = require('crypto');
+
 const MailHandler = require('../../../src/server/handler/MailHandler');
 
 const testMail = {
@@ -52,6 +57,55 @@ describe('MailHandler', () => {
       const addedMails = sut.getMails();
 
       expect(addedMails.length).toBe(3);
+    });
+
+    describe('add mail when EVENT_DELIVERY_URL is set', () => {
+
+      beforeAll(() => {
+        process.env.EVENT_DELIVERY_URL = 'http://example.com';
+      });
+
+      test('send delivery events', () => {
+        const sut = new MailHandler();
+
+        axios.post.mockResolvedValue({data: {message: 'success'}});
+
+        const messageId = crypto.randomUUID();
+
+        sut.addMail(testMail, messageId);
+
+        expect(axios.post.mock.calls[0][0]).toEqual(process.env.EVENT_DELIVERY_URL);
+        const eventData = axios.post.mock.calls[0][1];
+        expect(eventData.length).toBe(2);
+        expect(eventData[0]).toMatchObject({
+          email: testMail.personalizations[0].to[0].email,
+          event: 'delivered',
+          timestamp: expect.any(Number),
+          sg_event_id: expect.any(String),
+          sg_message_id: messageId,
+          'smtp-id': expect.any(String),
+        });
+      });
+
+      test('send delivery events with defaulted messageId', () => {
+        const sut = new MailHandler();
+
+        axios.post.mockResolvedValue({data: {message: 'success'}});
+
+        sut.addMail(testMail);
+
+        expect(axios.post.mock.calls[0][0]).toEqual(process.env.EVENT_DELIVERY_URL);
+        const eventData = axios.post.mock.calls[0][1];
+        expect(eventData.length).toBe(2);
+        expect(eventData[0]).toMatchObject({
+          email: testMail.personalizations[0].to[0].email,
+          event: 'delivered',
+          timestamp: expect.any(Number),
+          sg_event_id: expect.any(String),
+          sg_message_id: expect.any(String),
+          'smtp-id': expect.any(String),
+        });
+      });
     });
 
     describe('delete old mails', () => {

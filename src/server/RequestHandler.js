@@ -95,11 +95,12 @@ const RequestHandler = (app, apiAuthenticationKey, mailHandler) => {
       const reqApiKey = req.headers.authorization;
         
       if (reqApiKey === `Bearer ${apiAuthenticationKey}`) {
+        const messageId = crypto.randomUUID();
           
-        mailHandler.addMail(req.body);
+        mailHandler.addMail(req.body, messageId);
       
         res.status(202).header({
-          'X-Message-ID': crypto.randomUUID(),
+          'X-Message-ID': messageId,
         }).send();
       } else {
         res.status(403).send({
