@@ -1,6 +1,6 @@
 {
   "name": "sendgrid-mock",
-  "version": "1.9.2",
+  "version": "1.10.0",
   "description": "SendGrid API mock",
   "engines": {
     "node": ">=16",
