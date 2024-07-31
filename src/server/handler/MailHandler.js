@@ -1,5 +1,8 @@
 const {loggerFactory} = require('../logger/log4js');
 
+const axios = require('axios');
+const crypto = require('crypto');
+
 const logger = loggerFactory('MailHandler');
 
 const mailWithTimestamp = (mail) => {
@@ -123,7 +126,7 @@ class MailHandler {
       .slice(paginationStart, paginationStart + paginationSize);
   }
 
-  addMail(mail) {
+  addMail(mail, messageId = crypto.randomUUID()) {
 
     this.#mails = [mailWithTimestamp(mail), ...this.#mails];
 
@@ -132,7 +135,32 @@ class MailHandler {
       return Date.parse(mail.datetime).valueOf() >= maxRetentionTime;
     });
 
+    if (process.env.EVENT_DELIVERY_URL) {
+      this.sendDeliveryEvents(mail, messageId);
+    }
+
     logMemoryUsage(this.#mails);
+  }
+
+  sendDeliveryEvents(mail, messageId) {
+    const datetime = new Date();
+    const deliveredEvents = mail.personalizations
+      .flatMap(personalization => personalization.to)
+      .map(to => {
+        let event = {
+          email: to.email,
+          timestamp: datetime.getTime(),
+          event: 'delivered',
+          sg_event_id: crypto.randomUUID(),
+          sg_message_id: messageId,
+        };
+        event['smtp-id'] = crypto.randomUUID();
+        return event;
+      });
+
+    axios.post(process.env.EVENT_DELIVERY_URL, deliveredEvents)
+      .then(() => logger.debug(`Delivery events sent successfully to ${process.env.EVENT_DELIVERY_URL}`))
+      .catch((error) => logger.debug(`Failed to send delivery events to ${process.env.EVENT_DELIVERY_URL}`, error));
   }
 
   clear(filterCriteria) {

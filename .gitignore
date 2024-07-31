@@ -7,3 +7,6 @@ dist
 
 # VS Code
 .vscode
+
+# Intellij
+.idea
