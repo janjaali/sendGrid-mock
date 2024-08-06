@@ -30,7 +30,9 @@ SendGrid-Mock serves as a simple server mocking the sendgrid-apis for developmen
 
 ### Extras
 
-* Basic authentication support: Add basic authentication credentials by specifying environment variable `AUTHENTICATION` to the following format: `user1:passwordForUser1;user2:passwordForUser2`
+* Basic authentication support: Add basic authentication credentials by specifying environment variable `AUTHENTICATION` to the following format: `user1:passwordForUser1;user2:passwordForUser2`. This applies only to the static content.
+
+* API key support: Add API key authentication by specifying environment variable `API_KEY`. This applies only to the API endpoints.
 
 * Request rate limiting: Both the actual SendGrid API server as well as the SSL server can be rate limited by specifying environment variables:
   * `RATE_LIMIT_ENABLED`: `true` or `false` (default)

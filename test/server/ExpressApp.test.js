@@ -132,6 +132,24 @@ describe('App', () => {
       expect(response.statusCode).toBe(202);        
     });
 
+    test('basic auth does not apply to api endpoints', async () => {
+      const mailHandlerStub = sinon.createStubInstance(MailHandler);
+
+      const sut = setupExpressApp(
+          mailHandlerStub, 
+          {enabled: true, users: {shadow: 'the password'}},
+          'sonic',
+          rateLimitConfiguration
+        );
+    
+      const response = await request(sut)
+        .post('/v3/mail/send')
+        .send(testMail)
+        .set('Authorization', 'Bearer sonic')
+
+      expect(response.statusCode).toBe(202);
+    });
+
     test('accepts name as null', async () => {
       const mailWithNameNull = {
         ...testMail,
@@ -247,33 +265,25 @@ describe('App', () => {
     });
 
     describe('when authentication enabled', () => {
-
-      test('blocks not authenticated user ', async () => {
-
-        const mailHandlerStub = sinon.createStubInstance(MailHandler);
-
-        const sut = setupExpressApp(mailHandlerStub, {enabled: true}, undefined, rateLimitConfiguration);
-  
-        const response = await request(sut).get('/api/mails');
-        expect(response.statusCode).toBe(401);        
-      });
-
-      test('pass through authenticated user ', async () => {
-
+      test('basic auth does not apply to api endpoints', async () => {
         const mailHandlerStub = sinon.createStubInstance(MailHandler);
 
         const sut = setupExpressApp(
-          mailHandlerStub, 
-          {enabled: true, users: {sonic: 'the password'}},
-          undefined,
-          rateLimitConfiguration,
-        );
-  
+            mailHandlerStub,
+            {enabled: true, users: {sonic: 'the password'}},
+            undefined,
+            rateLimitConfiguration
+          );
+
         const response = await request(sut)
           .get('/api/mails')
-          .auth('sonic', 'the password');
+          .auth('shadow', 'not the password');
 
-        expect(response.statusCode).toBe(200);        
+        const responseNoAuth = await request(sut)
+          .get('/api/mails');
+
+        expect(response.statusCode).toBe(200);
+        expect(responseNoAuth.statusCode).toBe(200);
       });
     });
   });
@@ -313,33 +323,25 @@ describe('App', () => {
     });
 
     describe('when authentication enabled', () => {
-
-      test('blocks not authenticated user ', async () => {
-
-        const mailHandlerStub = sinon.createStubInstance(MailHandler);
-
-        const sut = setupExpressApp(mailHandlerStub, {enabled: true}, undefined, rateLimitConfiguration);
-  
-        const response = await request(sut).delete('/api/mails');
-        expect(response.statusCode).toBe(401);        
-      });
-
-      test('pass through authenticated user ', async () => {
-
+      test('basic auth does not apply to api endpoints', async () => {
         const mailHandlerStub = sinon.createStubInstance(MailHandler);
 
         const sut = setupExpressApp(
-          mailHandlerStub, 
-          {enabled: true, users: {sonic: 'the password'}},
-          undefined,
-          rateLimitConfiguration,
-        );
-  
+            mailHandlerStub,
+            {enabled: true, users: {sonic: 'the password'}},
+            undefined,
+            rateLimitConfiguration
+          );
+
         const response = await request(sut)
           .delete('/api/mails')
-          .auth('sonic', 'the password');
+          .auth('shadow', 'not the password');
 
-        expect(response.statusCode).toBe(202);        
+        const responseNoAuth = await request(sut)
+          .delete('/api/mails');
+
+        expect(response.statusCode).toBe(202);
+        expect(responseNoAuth.statusCode).toBe(202);
       });
     });
   });
