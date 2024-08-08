@@ -68,6 +68,13 @@ const jsonSchema = {
         type: 'string',
         nullable: true,
       },
+      categories: {
+        type: 'array',
+        items: {
+          type: 'string',
+        },
+        nullable: true,
+      }
     }
   }
 };

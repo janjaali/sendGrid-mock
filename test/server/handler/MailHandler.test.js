@@ -27,6 +27,7 @@ const testMail = {
       'value': 'important content',
     },
   ],
+  'categories': ['important']
 };
 
 describe('MailHandler', () => {
@@ -57,55 +58,6 @@ describe('MailHandler', () => {
       const addedMails = sut.getMails();
 
       expect(addedMails.length).toBe(3);
-    });
-
-    describe('add mail when EVENT_DELIVERY_URL is set', () => {
-
-      beforeAll(() => {
-        process.env.EVENT_DELIVERY_URL = 'http://example.com';
-      });
-
-      test('send delivery events', () => {
-        const sut = new MailHandler();
-
-        axios.post.mockResolvedValue({data: {message: 'success'}});
-
-        const messageId = crypto.randomUUID();
-
-        sut.addMail(testMail, messageId);
-
-        expect(axios.post.mock.calls[0][0]).toEqual(process.env.EVENT_DELIVERY_URL);
-        const eventData = axios.post.mock.calls[0][1];
-        expect(eventData.length).toBe(2);
-        expect(eventData[0]).toMatchObject({
-          email: testMail.personalizations[0].to[0].email,
-          event: 'delivered',
-          timestamp: expect.any(Number),
-          sg_event_id: expect.any(String),
-          sg_message_id: messageId,
-          'smtp-id': expect.any(String),
-        });
-      });
-
-      test('send delivery events with defaulted messageId', () => {
-        const sut = new MailHandler();
-
-        axios.post.mockResolvedValue({data: {message: 'success'}});
-
-        sut.addMail(testMail);
-
-        expect(axios.post.mock.calls[0][0]).toEqual(process.env.EVENT_DELIVERY_URL);
-        const eventData = axios.post.mock.calls[0][1];
-        expect(eventData.length).toBe(2);
-        expect(eventData[0]).toMatchObject({
-          email: testMail.personalizations[0].to[0].email,
-          event: 'delivered',
-          timestamp: expect.any(Number),
-          sg_event_id: expect.any(String),
-          sg_message_id: expect.any(String),
-          'smtp-id': expect.any(String),
-        });
-      });
     });
 
     describe('delete old mails', () => {
@@ -457,6 +409,94 @@ describe('MailHandler', () => {
       expect(remainingMails).toStrictEqual([
         {...testMail, datetime: addedMailDateTime},
       ]);
+    });
+  });
+
+  describe('delivery events', () => {
+    describe('add mail sends when EVENT_DELIVERY_URL is set', () => {
+
+      beforeAll(() => {
+        process.env.EVENT_DELIVERY_URL = 'http://example.com';
+      });
+
+      beforeEach(() => {
+        jest.clearAllMocks();
+      });
+
+      test('send delivery events', () => {
+        const sut = new MailHandler();
+
+        axios.post.mockResolvedValue({data: {message: 'success'}});
+
+        const messageId = crypto.randomUUID();
+
+        sut.addMail(testMail, messageId);
+
+        expect(axios.post.mock.calls[0][0]).toEqual(process.env.EVENT_DELIVERY_URL);
+        const eventData = axios.post.mock.calls[0][1];
+        expect(eventData.length).toBe(2);
+        expect(eventData[0]).toMatchObject({
+          email: testMail.personalizations[0].to[0].email,
+          event: 'delivered',
+          timestamp: expect.any(Number),
+          sg_event_id: expect.any(String),
+          sg_message_id: messageId,
+          'smtp-id': expect.any(String),
+          category: expect.any(Array)
+        });
+      });
+
+      test('send delivery events with defaulted messageId', () => {
+        const sut = new MailHandler();
+
+        axios.post.mockResolvedValue({data: {message: 'success'}});
+
+        sut.addMail(testMail);
+
+        expect(axios.post.mock.calls[0][0]).toEqual(process.env.EVENT_DELIVERY_URL);
+        const eventData = axios.post.mock.calls[0][1];
+        expect(eventData.length).toBe(2);
+        expect(eventData[0]).toMatchObject({
+          sg_message_id: expect.any(String),
+        });
+      });
+
+      describe('send delivery events with categories', () => {
+
+        test('single category array is returned as an array', () => {
+          const sut = new MailHandler();
+
+          axios.post.mockResolvedValue({data: {message: 'success'}});
+
+          sut.addMail(testMail);
+
+          expect(axios.post.mock.calls[0][0]).toEqual(process.env.EVENT_DELIVERY_URL);
+          const eventData = axios.post.mock.calls[0][1];
+          expect(eventData.length).toBe(2);
+          expect(eventData[0]).toMatchObject({
+            category: ['important']
+          });
+        });
+
+        test('without categories returns empty array', () => {
+          const mailWithoutCategories = {
+            ...testMail,
+          };
+          delete mailWithoutCategories.categories;
+          const sut = new MailHandler();
+
+          axios.post.mockResolvedValue({data: {message: 'success'}});
+
+          sut.addMail(mailWithoutCategories);
+
+          expect(axios.post.mock.calls[0][0]).toEqual(process.env.EVENT_DELIVERY_URL);
+          const eventData = axios.post.mock.calls[0][1];
+          expect(eventData.length).toBe(2);
+          expect(eventData[0]).toMatchObject({
+            category: [],
+          });
+        });
+      });
     });
   });
 });

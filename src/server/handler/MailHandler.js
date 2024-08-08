@@ -147,12 +147,14 @@ class MailHandler {
     const deliveredEvents = mail.personalizations
       .flatMap(personalization => personalization.to)
       .map(to => {
+        const categories = mail.categories ? mail.categories : [];
         let event = {
           email: to.email,
           timestamp: datetime.getTime(),
           event: 'delivered',
           sg_event_id: crypto.randomUUID(),
           sg_message_id: messageId,
+          category: categories
         };
         event['smtp-id'] = crypto.randomUUID();
         return event;

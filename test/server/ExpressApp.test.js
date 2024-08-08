@@ -209,6 +209,59 @@ describe('App', () => {
   
       expect(response.statusCode).toBe(400); 
     });
+
+    test('accepts categories as null', async () => {
+      const mailWithCategoriesNull = {
+        ...testMail,
+        'categories': null
+      };
+
+      const mailHandlerStub = sinon.createStubInstance(MailHandler);
+      const sut = setupExpressApp(mailHandlerStub, { enabled: false }, 'sonic', rateLimitConfiguration);
+
+      const response = await request(sut)
+        .post('/v3/mail/send')
+        .send(mailWithCategoriesNull)
+        .set('Authorization', 'Bearer sonic');
+
+      expect(response.statusCode).toBe(202);
+    });
+
+    test('accepts categories as array', async () => {
+      const mailWithCategoriesArray = {
+        ...testMail,
+        'categories': ['category1', 'category2']
+      };
+
+      const mailHandlerStub = sinon.createStubInstance(MailHandler);
+      const sut = setupExpressApp(mailHandlerStub, { enabled: false }, 'sonic', rateLimitConfiguration);
+
+      const response = await request(sut)
+        .post('/v3/mail/send')
+        .send(mailWithCategoriesArray)
+        .set('Authorization', 'Bearer sonic');
+
+      expect(response.statusCode).toBe(202);
+    });
+
+    test('rejects categories of incorrect type', async () => {
+      const mailWithInvalidCategories = {
+        ...testMail,
+        'categories': {
+          'bad': 'data'
+        }
+      };
+
+      const mailHandlerStub = sinon.createStubInstance(MailHandler);
+      const sut = setupExpressApp(mailHandlerStub, { enabled: false }, 'sonic', rateLimitConfiguration);
+
+      const response = await request(sut)
+        .post('/v3/mail/send')
+        .send(mailWithInvalidCategories)
+        .set('Authorization', 'Bearer sonic');
+
+      expect(response.statusCode).toBe(400);
+    });
   
   });
 
