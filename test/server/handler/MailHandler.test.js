@@ -497,6 +497,157 @@ describe('MailHandler', () => {
           });
         });
       });
+
+      describe('send delivery events with custom args at the request level', () => {
+        test('custom args are added to the event', () => {
+          const customArgs = {
+            'user_id': '12345',
+            'purchase': 'gold'
+          };
+          const sut = new MailHandler();
+
+          axios.post.mockResolvedValue({data: {message: 'success'}});
+
+          sut.addMail({...testMail, custom_args: customArgs});
+
+          expect(axios.post.mock.calls[0][0]).toEqual(process.env.EVENT_DELIVERY_URL);
+          const eventData = axios.post.mock.calls[0][1];
+          expect(eventData.length).toBe(2);
+
+          expect(eventData[0]['user_id']).toEqual('12345');
+          expect(eventData[0]['purchase']).toEqual('gold');
+
+          expect(eventData[1]['user_id']).toEqual('12345');
+          expect(eventData[1]['purchase']).toEqual('gold');
+        });
+
+        test('custom args do not override reserved fields', () => {
+          const customArgs = {
+            'email': '12345',
+            'timestamp': 12345,
+            'event': 'test',
+            'sg_event_id': '12345',
+            'sg_message_id': '12345',
+            'category': 'test',
+            'smtp-id': '12345',
+            'id': '67890'
+          };
+
+          const sut = new MailHandler();
+
+          axios.post.mockResolvedValue({data: {message: 'success'}});
+
+          sut.addMail({...testMail, custom_args: customArgs});
+
+          expect(axios.post.mock.calls[0][0]).toEqual(process.env.EVENT_DELIVERY_URL);
+
+          const eventData = axios.post.mock.calls[0][1];
+          expect(eventData.length).toBe(2);
+
+          expect(eventData[0]['email']).toEqual('to@example.com');
+          expect(eventData[0]['timestamp']).not.toEqual(12345);
+          expect(eventData[0]['event']).toEqual('delivered');
+          expect(eventData[0]['sg_event_id']).not.toEqual('12345');
+          expect(eventData[0]['sg_message_id']).not.toEqual('12345');
+          expect(eventData[0]['category']).not.toEqual('test');
+          expect(eventData[0]['smtp-id']).not.toEqual('12345');
+          expect(eventData[0]['id']).toEqual('67890');
+
+          expect(eventData[1]['email']).toEqual('to2@example.com');
+          expect(eventData[1]['timestamp']).not.toEqual(12345);
+          expect(eventData[1]['event']).toEqual('delivered');
+          expect(eventData[1]['sg_event_id']).not.toEqual('12345');
+          expect(eventData[1]['sg_message_id']).not.toEqual('12345');
+          expect(eventData[1]['category']).not.toEqual('test');
+          expect(eventData[1]['smtp-id']).not.toEqual('12345');
+          expect(eventData[1]['id']).toEqual('67890');
+        });
+      });
+
+      describe('send delivery events with custom args at the personalization level', () => {
+        test('custom args are added to the event', () => {
+          const mailWithCustomArgs = {...testMail};
+
+          mailWithCustomArgs['personalizations'][0]['custom_args'] = {
+            'user_id': '2455',
+            'purchase': 'gold'
+          };
+
+          const sut = new MailHandler();
+
+          axios.post.mockResolvedValue({data: {message: 'success'}});
+
+          sut.addMail(mailWithCustomArgs);
+
+          expect(axios.post.mock.calls[0][0]).toEqual(process.env.EVENT_DELIVERY_URL);
+          const eventData = axios.post.mock.calls[0][1];
+          expect(eventData.length).toBe(2);
+
+          expect(eventData[0]['user_id']).toEqual('2455');
+          expect(eventData[0]['purchase']).toEqual('gold');
+        });
+
+        test('personalization custom args override mail custom args', () => {
+          const mailWithCustomArgs = {...testMail};
+
+          mailWithCustomArgs['personalizations'][0]['custom_args'] = {
+            'user_id': '2455',
+            'purchase': 'gold'
+          };
+
+          mailWithCustomArgs.custom_args = {
+            'user_id': '12345',
+            'purchase': 'silver'
+          };
+
+          const sut = new MailHandler();
+
+          axios.post.mockResolvedValue({data: {message: 'success'}});
+
+          sut.addMail(mailWithCustomArgs);
+
+          expect(axios.post.mock.calls[0][0]).toEqual(process.env.EVENT_DELIVERY_URL);
+          const eventData = axios.post.mock.calls[0][1];
+          expect(eventData.length).toBe(2);
+
+          expect(eventData[0]['user_id']).toEqual('2455');
+          expect(eventData[0]['purchase']).toEqual('gold');
+        });
+
+        test('personalization custom args do not override reserved fields', () => {
+          const mailWithCustomArgs = {...testMail};
+
+          mailWithCustomArgs['personalizations'][0]['custom_args'] = {
+            'email': '12345',
+            'timestamp': 12345,
+            'event': 'test',
+            'sg_event_id': '12345',
+            'sg_message_id': '12345',
+            'category': 'test',
+            'smtp-id': '12345',
+            'id': '67890'
+          };
+
+          const sut = new MailHandler();
+
+          axios.post.mockResolvedValue({data: {message: 'success'}});
+
+          sut.addMail(mailWithCustomArgs);
+
+          expect(axios.post.mock.calls[0][0]).toEqual(process.env.EVENT_DELIVERY_URL);
+          const eventData = axios.post.mock.calls[0][1];
+          expect(eventData.length).toBe(2);
+
+          expect(eventData[0]['email']).toEqual('to@example.com');
+          expect(eventData[0]['timestamp']).not.toEqual(12345);
+          expect(eventData[0]['event']).toEqual('delivered');
+          expect(eventData[0]['sg_event_id']).not.toEqual('12345');
+          expect(eventData[0]['sg_message_id']).not.toEqual('12345');
+          expect(eventData[0]['category']).not.toEqual('test');
+          expect(eventData[0]['smtp-id']).not.toEqual('12345');
+          expect(eventData[0]['id']).toEqual('67890');
+        });
+      });
     });
   });
 });

@@ -32,6 +32,8 @@ const logMemoryUsage = (mails) => {
   );  
 };
 
+const RESERVED_KEYS = ['email', 'timestamp', 'event', 'sg_event_id', 'sg_message_id', 'category', 'smtp-id'];
+
 const parseDurationStringAsSeconds = (durationString) => {
   var stringPattern = /^PT(?:(\d+)D)?(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:\.\d{1,3})?)S)?$/;
   var stringParts = stringPattern.exec(durationString.trim());
@@ -145,19 +147,32 @@ class MailHandler {
   sendDeliveryEvents(mail, messageId) {
     const datetime = new Date();
     const deliveredEvents = mail.personalizations
-      .flatMap(personalization => personalization.to)
-      .map(to => {
-        const categories = mail.categories ? mail.categories : [];
-        let event = {
-          email: to.email,
-          timestamp: datetime.getTime(),
-          event: 'delivered',
-          sg_event_id: crypto.randomUUID(),
-          sg_message_id: messageId,
-          category: categories
-        };
-        event['smtp-id'] = crypto.randomUUID();
-        return event;
+      .flatMap(personalization => {
+        return personalization.to.map(to => {
+          const categories = mail.categories ? mail.categories : [];
+          let event = {
+            email: to.email,
+            timestamp: datetime.getTime(),
+            event: 'delivered',
+            sg_event_id: crypto.randomUUID(),
+            sg_message_id: messageId,
+            category: categories
+          };
+          event['smtp-id'] = crypto.randomUUID();
+
+          if (mail.custom_args || personalization.custom_args) {
+            const mailCustomArgs = mail.custom_args ? mail.custom_args : {};
+            const personalizationCustomArgs = personalization.custom_args ? personalization.custom_args : {};
+            //Override mail custom args with personalization custom args
+            const customArgs = Object.assign(mailCustomArgs, personalizationCustomArgs);
+            //Remove reserved keys for both mail and personalization custom args
+            RESERVED_KEYS.forEach(key => delete customArgs[key]);
+
+            event = Object.assign(event, customArgs);
+          }
+
+          return event;
+        });
       });
 
     axios.post(process.env.EVENT_DELIVERY_URL, deliveredEvents)

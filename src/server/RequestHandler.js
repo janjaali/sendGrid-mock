@@ -57,6 +57,10 @@ const jsonSchema = {
                   },
                 },
               },
+            },
+            custom_args: {
+              type: 'object',
+              nullable: true,
             }
           },
         }
@@ -73,6 +77,10 @@ const jsonSchema = {
         items: {
           type: 'string',
         },
+        nullable: true,
+      },
+      custom_args: {
+        type: 'object',
         nullable: true,
       }
     }
