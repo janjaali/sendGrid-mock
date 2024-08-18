@@ -209,7 +209,163 @@ describe('App', () => {
   
       expect(response.statusCode).toBe(400); 
     });
-  
+
+    test('accepts categories as null', async () => {
+      const mailWithCategoriesNull = {
+        ...testMail,
+        'categories': null
+      };
+
+      const mailHandlerStub = sinon.createStubInstance(MailHandler);
+      const sut = setupExpressApp(mailHandlerStub, { enabled: false }, 'sonic', rateLimitConfiguration);
+
+      const response = await request(sut)
+        .post('/v3/mail/send')
+        .send(mailWithCategoriesNull)
+        .set('Authorization', 'Bearer sonic');
+
+      expect(response.statusCode).toBe(202);
+    });
+
+    test('accepts categories as array', async () => {
+      const mailWithCategoriesArray = {
+        ...testMail,
+        'categories': ['category1', 'category2']
+      };
+
+      const mailHandlerStub = sinon.createStubInstance(MailHandler);
+      const sut = setupExpressApp(mailHandlerStub, { enabled: false }, 'sonic', rateLimitConfiguration);
+
+      const response = await request(sut)
+        .post('/v3/mail/send')
+        .send(mailWithCategoriesArray)
+        .set('Authorization', 'Bearer sonic');
+
+      expect(response.statusCode).toBe(202);
+    });
+
+    test('rejects categories of incorrect type', async () => {
+      const mailWithInvalidCategories = {
+        ...testMail,
+        'categories': {
+          'bad': 'data'
+        }
+      };
+
+      const mailHandlerStub = sinon.createStubInstance(MailHandler);
+      const sut = setupExpressApp(mailHandlerStub, { enabled: false }, 'sonic', rateLimitConfiguration);
+
+      const response = await request(sut)
+        .post('/v3/mail/send')
+        .send(mailWithInvalidCategories)
+        .set('Authorization', 'Bearer sonic');
+
+      expect(response.statusCode).toBe(400);
+    });
+
+    test('accepts custom args as an object', async () => {
+      const mailWithCustomArgs = {
+        ...testMail,
+        'custom_args': {
+          'key': 'value'
+        }
+      };
+
+      const mailHandlerStub = sinon.createStubInstance(MailHandler);
+      const sut = setupExpressApp(mailHandlerStub, { enabled: false }, 'sonic', rateLimitConfiguration);
+
+      const response = await request(sut)
+        .post('/v3/mail/send')
+        .send(mailWithCustomArgs)
+        .set('Authorization', 'Bearer sonic');
+
+      expect(response.statusCode).toBe(202);
+    });
+
+    test('rejects custom args of incorrect type', async () => {
+      const mailWithInvalidCustomArgs = {
+        ...testMail,
+        'custom_args': ['invalid']
+      };
+
+      const mailHandlerStub = sinon.createStubInstance(MailHandler);
+      const sut = setupExpressApp(mailHandlerStub, { enabled: false }, 'sonic', rateLimitConfiguration);
+
+      const response = await request(sut)
+        .post('/v3/mail/send')
+        .send(mailWithInvalidCustomArgs)
+        .set('Authorization', 'Bearer sonic');
+
+      expect(response.statusCode).toBe(400);
+    });
+
+    test('accepts custom args as null', async () => {
+      const mailWithCustomArgsNull = {
+        ...testMail,
+        'custom_args': null
+      };
+
+      const mailHandlerStub = sinon.createStubInstance(MailHandler);
+      const sut = setupExpressApp(mailHandlerStub, { enabled: false }, 'sonic', rateLimitConfiguration);
+
+      const response = await request(sut)
+        .post('/v3/mail/send')
+        .send(mailWithCustomArgsNull)
+        .set('Authorization', 'Bearer sonic');
+
+      expect(response.statusCode).toBe(202);
+    });
+
+    test('accepts custom args at the personalization level', async () => {
+      const personalizedCustomArgs = {
+        'key': 'value'
+      };
+
+      const mailWithPersonalizedCustomArgs = testMail;
+      mailWithPersonalizedCustomArgs.personalizations[0]['custom_args'] = personalizedCustomArgs;
+
+      const mailHandlerStub = sinon.createStubInstance(MailHandler);
+      const sut = setupExpressApp(mailHandlerStub, { enabled: false }, 'sonic', rateLimitConfiguration);
+
+      const response = await request(sut)
+        .post('/v3/mail/send')
+        .send(mailWithPersonalizedCustomArgs)
+        .set('Authorization', 'Bearer sonic');
+
+      expect(response.statusCode).toBe(202);
+    });
+
+    test('rejects custom args at the personalization level of incorrect type', async () => {
+      const personalizedCustomArgs = ['invalid'];
+
+      const mailWithInvalidPersonalizedCustomArgs = testMail;
+      mailWithInvalidPersonalizedCustomArgs.personalizations[0]['custom_args'] = personalizedCustomArgs;
+
+      const mailHandlerStub = sinon.createStubInstance(MailHandler);
+      const sut = setupExpressApp(mailHandlerStub, { enabled: false }, 'sonic', rateLimitConfiguration);
+
+      const response = await request(sut)
+        .post('/v3/mail/send')
+        .send(mailWithInvalidPersonalizedCustomArgs)
+        .set('Authorization', 'Bearer sonic');
+
+      expect(response.statusCode).toBe(400);
+    });
+
+    test('accepts custom args at the personalization level as null', async () => {
+      const mailWithPersonalizedCustomArgsNull = testMail;
+      mailWithPersonalizedCustomArgsNull.personalizations[0]['custom_args'] = null;
+
+      const mailHandlerStub = sinon.createStubInstance(MailHandler);
+      const sut = setupExpressApp(mailHandlerStub, { enabled: false }, 'sonic', rateLimitConfiguration);
+
+      const response = await request(sut)
+        .post('/v3/mail/send')
+        .send(mailWithPersonalizedCustomArgsNull)
+        .set('Authorization', 'Bearer sonic');
+
+      expect(response.statusCode).toBe(202);
+    });
   });
 
   describe('GET /api/mails', () => {
