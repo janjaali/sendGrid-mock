@@ -1,8 +1,7 @@
-const request = require('supertest');
-const sinon = require('sinon');
-
-const {setupExpressApp} = require('../../src/server/ExpressApp');
-const MailHandler = require('../../src/server/handler/MailHandler');
+import request from 'supertest';
+import sinon from 'sinon';
+import {setupExpressApp} from '../../src/server/ExpressApp';
+import MailHandler from '../../src/server/handler/MailHandler';
 
 const rateLimitConfiguration = {enabled: false};
 
@@ -54,17 +53,17 @@ describe('App', () => {
       mailHandlerStub
         .addMail
         .withArgs(
-          sinon.match(testMail) 
+          sinon.match(testMail)
         )
         .returns(undefined);
-      
+
       const sut = setupExpressApp(mailHandlerStub, { enabled: false }, 'sonic', rateLimitConfiguration);
 
       const response = await request(sut)
         .post('/v3/mail/send')
         .send(testMail)
         .set('Authorization', 'Bearer sonic');
-      
+
       expect(response.statusCode).toBe(202);
     });
 
@@ -74,17 +73,17 @@ describe('App', () => {
       mailHandlerStub
         .addMail
         .withArgs(
-          sinon.match(testMail) 
+          sinon.match(testMail)
         )
         .returns(undefined);
-      
+
       const sut = setupExpressApp(mailHandlerStub, { enabled: false }, 'sonic', rateLimitConfiguration);
 
       const response = await request(sut)
         .post('/v3/mail/send')
         .send(testMailWithTemplateId)
         .set('Authorization', 'Bearer sonic');
-      
+
       expect(response.statusCode).toBe(202);
     });
 
@@ -94,17 +93,17 @@ describe('App', () => {
       mailHandlerStub
         .addMail
         .withArgs(
-          sinon.match(testMail) 
+          sinon.match(testMail)
         )
         .returns(undefined);
-      
+
       const sut = setupExpressApp(mailHandlerStub, { enabled: false }, 'sonic', rateLimitConfiguration);
 
       const response = await request(sut)
         .post('/v3/mail/send')
         .send(testMail)
         .set('Authorization', 'Bearer sonic');
-      
+
       expect(response.headers['x-message-id']).toBeDefined();
     });
 
@@ -115,7 +114,7 @@ describe('App', () => {
       const sut = setupExpressApp(mailHandlerStub, {enabled: false}, 'sonic', rateLimitConfiguration);
 
       const response = await request(sut).post('/v3/mail/send').send(testMail);
-      expect(response.statusCode).toBe(403);        
+      expect(response.statusCode).toBe(403);
     });
 
     test('pass through authenticated user ', async () => {
@@ -129,19 +128,19 @@ describe('App', () => {
         .send(testMail)
         .set('Authorization', 'Bearer sonic');
 
-      expect(response.statusCode).toBe(202);        
+      expect(response.statusCode).toBe(202);
     });
 
     test('basic auth does not apply to api endpoints', async () => {
       const mailHandlerStub = sinon.createStubInstance(MailHandler);
 
       const sut = setupExpressApp(
-          mailHandlerStub, 
+          mailHandlerStub,
           {enabled: true, users: {shadow: 'the password'}},
           'sonic',
           rateLimitConfiguration
         );
-    
+
       const response = await request(sut)
         .post('/v3/mail/send')
         .send(testMail)
@@ -158,18 +157,18 @@ describe('App', () => {
           'name': null
         }
       };
-  
+
       const mailHandlerStub = sinon.createStubInstance(MailHandler);
       const sut = setupExpressApp(mailHandlerStub, { enabled: false }, 'sonic', rateLimitConfiguration);
-  
+
       const response = await request(sut)
         .post('/v3/mail/send')
         .send(mailWithNameNull)
         .set('Authorization', 'Bearer sonic');
-  
+
       expect(response.statusCode).toBe(202);
     });
-  
+
     test('accepts name as string', async () => {
       const mailWithNameString = {
         ...testMail,
@@ -178,18 +177,18 @@ describe('App', () => {
           'name': 'Valid Name'
         }
       };
-  
+
       const mailHandlerStub = sinon.createStubInstance(MailHandler);
       const sut = setupExpressApp(mailHandlerStub, { enabled: false }, 'sonic', rateLimitConfiguration);
-  
+
       const response = await request(sut)
         .post('/v3/mail/send')
         .send(mailWithNameString)
         .set('Authorization', 'Bearer sonic');
-  
+
       expect(response.statusCode).toBe(202);
     });
-  
+
     test('rejects name of incorrect type', async () => {
       const mailWithInvalidName = {
         ...testMail,
@@ -198,16 +197,16 @@ describe('App', () => {
           'name': 123
         }
       };
-  
+
       const mailHandlerStub = sinon.createStubInstance(MailHandler);
       const sut = setupExpressApp(mailHandlerStub, { enabled: false }, 'sonic', rateLimitConfiguration);
-  
+
       const response = await request(sut)
         .post('/v3/mail/send')
         .send(mailWithInvalidName)
         .set('Authorization', 'Bearer sonic');
-  
-      expect(response.statusCode).toBe(400); 
+
+      expect(response.statusCode).toBe(400);
     });
 
     test('accepts categories as null', async () => {
@@ -322,6 +321,7 @@ describe('App', () => {
       };
 
       const mailWithPersonalizedCustomArgs = testMail;
+      // @ts-ignore
       mailWithPersonalizedCustomArgs.personalizations[0]['custom_args'] = personalizedCustomArgs;
 
       const mailHandlerStub = sinon.createStubInstance(MailHandler);
@@ -339,6 +339,7 @@ describe('App', () => {
       const personalizedCustomArgs = ['invalid'];
 
       const mailWithInvalidPersonalizedCustomArgs = testMail;
+      // @ts-ignore
       mailWithInvalidPersonalizedCustomArgs.personalizations[0]['custom_args'] = personalizedCustomArgs;
 
       const mailHandlerStub = sinon.createStubInstance(MailHandler);
@@ -354,6 +355,7 @@ describe('App', () => {
 
     test('accepts custom args at the personalization level as null', async () => {
       const mailWithPersonalizedCustomArgsNull = testMail;
+      // @ts-ignore
       mailWithPersonalizedCustomArgsNull.personalizations[0]['custom_args'] = null;
 
       const mailHandlerStub = sinon.createStubInstance(MailHandler);
@@ -370,24 +372,24 @@ describe('App', () => {
 
   describe('GET /api/mails', () => {
 
-    const testGetMails = (url) => {
-      return async (expectedFilterCriteria, expectedPaginationCriteria) => {
+    const testGetMails = (url: string) => {
+      return async (expectedFilterCriteria: any, expectedPaginationCriteria: any) => {
 
         const mailHandlerStub = sinon.createStubInstance(MailHandler);
         mailHandlerStub
           .getMails
           .withArgs(
-            sinon.match(expectedFilterCriteria), 
+            sinon.match(expectedFilterCriteria),
             sinon.match(expectedPaginationCriteria)
           )
-          .returns(['mail']);
-        
+          .returns([testMail]);
+
         const sut = setupExpressApp(mailHandlerStub, { enabled: false }, undefined, rateLimitConfiguration);
-  
+
         const response = await request(sut).get(url);
-        
+
         expect(response.statusCode).toBe(200);
-        expect(response.body).toStrictEqual(['mail']);
+        expect(response.body).toStrictEqual([testMail]);
       };
     };
 
@@ -399,7 +401,7 @@ describe('App', () => {
     test('get mails with provided filter criteria', async () => {
 
       await testGetMails('/api/mails?to=receiver&subject=important&dateTimeSince=2000')(
-        sinon.match({to: 'receiver', subject: 'important', dateTimeSince: '2000'}), 
+        sinon.match({to: 'receiver', subject: 'important', dateTimeSince: '2000'}),
         sinon.match({})
       );
     });
@@ -407,16 +409,16 @@ describe('App', () => {
     test('get mails with provided pagination criteria', async () => {
 
       await testGetMails('/api/mails?pageSize=20&page=10')(
-        sinon.match({}), 
-        sinon.match({pageSize: '20', page: '10'})
+        sinon.match({to: undefined, subject: undefined, dateTimeSince: undefined}),
+        sinon.match({pageSize: 20, page: 10})
       );
     });
 
     test('get mails with provided filter and pagination criteria', async () => {
 
       await testGetMails('/api/mails?pageSize=20&page=10&to=receiver')(
-        sinon.match({to: 'receiver'}), 
-        sinon.match({pageSize: '20'})
+        sinon.match({to: 'receiver'}),
+        sinon.match({pageSize: 20})
       );
     });
 
@@ -445,36 +447,35 @@ describe('App', () => {
   });
 
   describe('DELETE /api/mails', () => {
-    
-    const testDeleteMails = (url) => {
-      return async (expectedFilterCriteria) => {
+
+    const testDeleteMails = (url: string) => {
+      return async (expectedFilterCriteria: any) => {
 
         const mailHandlerStub = sinon.createStubInstance(MailHandler);
         mailHandlerStub
           .clear
           .withArgs(
-            sinon.match(expectedFilterCriteria) 
+            sinon.match(expectedFilterCriteria),
           )
           .returns(undefined);
-        
+
         const sut = setupExpressApp(mailHandlerStub, { enabled: false }, undefined, rateLimitConfiguration);
-  
+
         const response = await request(sut).delete(url);
-        
+
         expect(response.statusCode).toBe(202);
       };
     };
 
     test('clear mails', async () => {
 
-      await testDeleteMails('/api/mails')({}, {});
+      await testDeleteMails('/api/mails')({});
     });
 
     test('clear mails with provided filter criteria', async () => {
 
       await testDeleteMails('/api/mails?to=receiver')(
-        sinon.match({to: 'receiver'}), 
-        sinon.match({})
+        sinon.match({to: 'receiver'})
       );
     });
 

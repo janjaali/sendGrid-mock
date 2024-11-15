@@ -1,17 +1,18 @@
-const path = require('path');
-const express = require('express');
-const basicAuth = require('express-basic-auth');
-const { rateLimit } = require('express-rate-limit');
-const { loggerFactory } = require('./logger/log4js');
-const RequestHandler = require('./RequestHandler');
+import path from 'path';
+import express from 'express';
+import basicAuth from 'express-basic-auth';
+import { rateLimit } from 'express-rate-limit';
+import { loggerFactory } from './logger/log4js.ts';
+import RequestHandler from './RequestHandler.ts';
+import MailHandler from '@/server/handler/MailHandler.ts';
 
 const logger = loggerFactory('ExpressApp');
 
 const setupExpressApp = (
-  mailHandler, 
-  apiAuthentication, 
-  mockedApiAuthenticationKey, 
-  rateLimitConfiguration,
+  mailHandler: MailHandler,
+  apiAuthentication: { enabled: boolean; users?: { [x: string]: string; }; },
+  mockedApiAuthenticationKey: string | undefined,
+  rateLimitConfiguration: { enabled: any; windowInMs?: any; maxRequests?: any; },
 ) => {
 
   const app = express();
@@ -29,7 +30,7 @@ const setupExpressApp = (
       standardHeaders: true,
     });
 
-    app.use(definedRateLimit);  
+    app.use(definedRateLimit);
 
   } else {
     logger.warn('Rate limit is disabled!');
@@ -40,7 +41,7 @@ const setupExpressApp = (
 
   // We configure this middleware after the API request handlers because we want basic auth to only apply to the static content.
   if (apiAuthentication.enabled) {
-    app.use(basicAuth({ challenge: true, users: apiAuthentication.users }));
+    app.use(basicAuth({ challenge: true, users: apiAuthentication.users ?? {} }));
   }
 
   // Static content.
@@ -52,6 +53,6 @@ const setupExpressApp = (
   return app;
 };
 
-module.exports = {
+export {
   setupExpressApp,
 };

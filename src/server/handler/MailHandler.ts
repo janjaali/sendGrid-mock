@@ -1,16 +1,16 @@
-const {loggerFactory} = require('../logger/log4js');
-
-const axios = require('axios');
-const crypto = require('crypto');
+import axios from 'axios';
+import crypto from 'crypto';
+import { loggerFactory } from '../logger/log4js.ts';
+import { Mail, MailPersonalization } from '@/types/Mail.ts';
 
 const logger = loggerFactory('MailHandler');
 
-const mailWithTimestamp = (mail) => {
+const mailWithTimestamp = (mail: Mail) => {
   const now = new Date();
   return { datetime: now, ...mail };
 };
 
-const formatBytes = (bytes, decimals = 2) => {
+const formatBytes = (bytes: number, decimals = 2) => {
 
   if (bytes === 0) return '0 Bytes';
 
@@ -23,103 +23,110 @@ const formatBytes = (bytes, decimals = 2) => {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 };
 
-const logMemoryUsage = (mails) => {
+const logMemoryUsage = (mails: Mail[]) => {
 
   const memoryUsage = process.memoryUsage();
 
   logger.info(
     `SendGrid Mock has ${mails.length} mails. (Memory: ${formatBytes(memoryUsage.heapUsed)} used of ${formatBytes(memoryUsage.heapTotal)})`
-  );  
+  );
 };
 
 const RESERVED_KEYS = ['email', 'timestamp', 'event', 'sg_event_id', 'sg_message_id', 'category', 'smtp-id'];
 
-const parseDurationStringAsSeconds = (durationString) => {
-  var stringPattern = /^PT(?:(\d+)D)?(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:\.\d{1,3})?)S)?$/;
-  var stringParts = stringPattern.exec(durationString.trim());
+const parseDurationStringAsSeconds = (durationString: string) => {
+  const stringPattern = /^PT(?:(\d+)D)?(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:\.\d{1,3})?)S)?$/;
+  const stringParts = stringPattern.exec(durationString.trim());
+  if (stringParts === null || stringParts === undefined) {
+    return 0;
+  }
   return (
     (
       (
-        (stringParts[1] === undefined ? 0 : stringParts[1] * 1)  /* Days */
-                * 24 + (stringParts[2] === undefined ? 0 : stringParts[2] * 1) /* Hours */
+        (stringParts[1] === undefined ? 0 : Number(stringParts[1]) * 1)  /* Days */
+                * 24 + (stringParts[2] === undefined ? 0 : Number(stringParts[2]) * 1) /* Hours */
       )
-            * 60 + (stringParts[3] === undefined ? 0 : stringParts[3] * 1) /* Minutes */
+            * 60 + (stringParts[3] === undefined ? 0 : Number(stringParts[3]) * 1) /* Minutes */
     )
-        * 60 + (stringParts[4] === undefined ? 0 : stringParts[4] * 1) /* Seconds */
+        * 60 + (stringParts[4] === undefined ? 0 : Number(stringParts[4]) * 1) /* Seconds */
   );
 };
 
-const mailSentTo = (mail, to) => {
-  
+const mailSentTo = (mail: Mail, to?: string) => {
+
   if (Array.isArray(mail.personalizations)) {
-    
-    const matcherFn = to.startsWith('%') && to.endsWith('%')
-      ? string => string.toLowerCase().includes(to.substring(1, to.length -1).toLowerCase())
-      : string => string.toLowerCase() == to.toLowerCase();
+
+    const matcherFn = to &&to.startsWith('%') && to.endsWith('%')
+      ? (string: string) => string.toLowerCase().includes(to.substring(1, to.length -1).toLowerCase())
+      : (string: string) => string.toLowerCase() == to?.toLowerCase();
 
     return mail
       .personalizations
       .flatMap(personalization => personalization.to)
-      .some(to => matcherFn(to.email));
+      .some(to => matcherFn(to?.email ?? ''));
   } else {
     return false;
   }
 };
 
-const mailContainSubject = (mail, subject) => {
-  
+const mailContainSubject = (mail: Mail, subject?: string) => {
+
   const actualSubject = mail.subject;
-  
-  if (subject.startsWith('%') && subject.endsWith('%')) {
+
+  if (subject && subject.startsWith('%') && subject.endsWith('%')) {
     const searchSubject = subject.substring(1, subject.length - 1);
     return actualSubject.toLowerCase().includes(searchSubject.toLowerCase());
   } else {
-    return actualSubject.toLowerCase() === subject.toLowerCase();
-  }  
+    return actualSubject.toLowerCase() === subject?.toLowerCase();
+  }
 };
 
-const mailSentAfter = (mail, dateTime) => {
-  
+const mailSentAfter = (mail: Mail, dateTime?: string) => {
+  if (!dateTime) {
+    return true;
+  }
   const dateTimeSince = Date.parse(dateTime);
-  
+
+  const dateTimeMail = mail.datetime?.valueOf() ?? 0;
+
   if (isNaN(dateTimeSince)) {
     throw 'The provided date cannot be parsed';
   }
 
-  return mail.datetime > dateTimeSince;
+  return dateTimeMail > dateTimeSince;
 };
 
 class MailHandler {
-    
-  #mails = [];
+
+  #mails: Array<Mail> = [];
 
   #mailRetentionDurationInSeconds = 86400; // one day
 
-  constructor(mailRetentionDuration) {
+  constructor(mailRetentionDuration?: string | undefined) {
 
     if (mailRetentionDuration) {
       this.#mailRetentionDurationInSeconds = parseDurationStringAsSeconds(
         mailRetentionDuration
-      ); 
+      );
     }
   }
 
-  getMails(filterCriteria, paginationCriteria) {
-  
+  getMails(filterCriteria?: { to?: string; subject?: string; dateTimeSince?: string; }, paginationCriteria?: { pageSize?: number; page?: number; }) {
+
     const filters = [
-      filterCriteria?.to ? 
-        mail => mailSentTo(mail, filterCriteria.to) 
-        : _ => true,
-      filterCriteria?.subject ? 
-        mail => mailContainSubject(mail, filterCriteria.subject) 
-        : _ => true,
+      filterCriteria?.to ?
+        (mail: Mail) => mailSentTo(mail, filterCriteria.to)
+        : () => true,
+      filterCriteria?.subject ?
+        (mail: Mail) => mailContainSubject(mail, filterCriteria.subject)
+        : () => true,
       filterCriteria?.dateTimeSince ?
-        mail => mailSentAfter(mail, filterCriteria.dateTimeSince) :
-        _ => true,
+        (mail: Mail) => mailSentAfter(mail, filterCriteria.dateTimeSince) :
+          () => true,
     ];
 
     const paginationSize = paginationCriteria?.pageSize || 20;
-    const paginationStart = paginationCriteria?.page ? 
+    const paginationStart = paginationCriteria?.page ?
       (paginationCriteria.page - 1) * paginationSize :
       0 ;
 
@@ -128,13 +135,13 @@ class MailHandler {
       .slice(paginationStart, paginationStart + paginationSize);
   }
 
-  addMail(mail, messageId = crypto.randomUUID()) {
+  addMail(mail: Mail, messageId = crypto.randomUUID()) {
 
     this.#mails = [mailWithTimestamp(mail), ...this.#mails];
 
     const maxRetentionTime = Date.now() - (this.#mailRetentionDurationInSeconds * 1000);
     this.#mails = this.#mails.filter(mail => {
-      return Date.parse(mail.datetime).valueOf() >= maxRetentionTime;
+      return Date.parse(mail.datetime?.toString() ?? '').valueOf() >= maxRetentionTime;
     });
 
     if (process.env.EVENT_DELIVERY_URL) {
@@ -144,11 +151,10 @@ class MailHandler {
     logMemoryUsage(this.#mails);
   }
 
-  sendDeliveryEvents(mail, messageId) {
+  sendDeliveryEvents(mail: Mail, messageId: string) {
     const datetime = new Date();
-    const deliveredEvents = mail.personalizations
-      .flatMap(personalization => {
-        return personalization.to.map(to => {
+    const deliveredEvents = mail.personalizations?.flatMap((personalization: MailPersonalization) => {
+        return personalization.to?.map(to => {
           const categories = mail.categories ? mail.categories : [];
           let event = {
             email: to.email,
@@ -156,9 +162,9 @@ class MailHandler {
             event: 'delivered',
             sg_event_id: crypto.randomUUID(),
             sg_message_id: messageId,
-            category: categories
+            category: categories,
+            "smtp-id": crypto.randomUUID(),
           };
-          event['smtp-id'] = crypto.randomUUID();
 
           if (mail.custom_args || personalization.custom_args) {
             const mailCustomArgs = mail.custom_args ? mail.custom_args : {};
@@ -174,22 +180,24 @@ class MailHandler {
           return event;
         });
       });
-
+    if (!process.env.EVENT_DELIVERY_URL) {
+      throw new Error('EVENT_DELIVERY_URL is not set');
+    }
     axios.post(process.env.EVENT_DELIVERY_URL, deliveredEvents)
       .then(() => logger.debug(`Delivery events sent successfully to ${process.env.EVENT_DELIVERY_URL}`))
       .catch((error) => logger.debug(`Failed to send delivery events to ${process.env.EVENT_DELIVERY_URL}`, error));
   }
 
-  clear(filterCriteria) {
-    
+  clear(filterCriteria?: { to: string; }) {
+
     const filters = [
-      filterCriteria?.to ? 
-        mail => mailSentTo(mail, filterCriteria.to) 
-        : _ => true,
+      filterCriteria?.to ?
+            (mail: Mail) => mailSentTo(mail, filterCriteria.to)
+        : () => true,
     ];
 
     this.#mails = this.#mails.filter(mail => !filters.some(filter => filter(mail)));
   }
 }
 
-module.exports = MailHandler;
+export default MailHandler;
