@@ -1,12 +1,11 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
+    "outDir": "./build",
+    "target": "ES6",
     "useDefineForClassFields": true,
-    "allowImportingTsExtensions": true,
-    "module": "ESNext",
+    "module": "CommonJS",
     "moduleResolution": "Node",
     "strict": true,
-    "jsx": "preserve",
     "allowJs": true,
     "preserveSymlinks": false,
     "resolveJsonModule": true,
@@ -17,7 +16,6 @@
       "DOM"
     ],
     "skipLibCheck": true,
-    "noEmit": true,
     "paths": {
       "@/*": [
         "./src/*"
@@ -25,7 +23,7 @@
     },
     "types": [
       "node",
-      "jest",
+      "jest"
     ]
   },
   "include": [

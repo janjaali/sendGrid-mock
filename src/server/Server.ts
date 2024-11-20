@@ -1,7 +1,7 @@
-import { loggerFactory } from './logger/log4js.ts';
-import { setupExpressApp } from './ExpressApp.ts';
-import MailHandler from './handler/MailHandler.ts';
-import asHttpsServer from './ssl/index.ts';
+import { loggerFactory } from './logger/log4js';
+import { setupExpressApp } from './ExpressApp';
+import MailHandler from './handler/MailHandler';
+import asHttpsServer from './ssl/index';
 
 const logger = loggerFactory('Server');
 

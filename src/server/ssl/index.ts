@@ -2,12 +2,11 @@ import express from 'express';
 import fs from 'fs';
 import http from 'http';
 import https from 'https';
-import { loggerFactory } from '../logger/log4js.ts';
 import path from 'path';
 import { spawn } from 'child_process';
 import sanitize from 'sanitize-filename';
 import { rateLimit } from 'express-rate-limit';
-
+import { loggerFactory } from '../logger/log4js';
 
 /** Binds an existing Express server application with SSL certificate to
  * provide it via HTTPS using Certbot and Let's Encrypt. This implementation is

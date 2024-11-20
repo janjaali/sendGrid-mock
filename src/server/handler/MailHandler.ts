@@ -1,7 +1,7 @@
 import axios from 'axios';
 import crypto from 'crypto';
-import { loggerFactory } from '../logger/log4js.ts';
-import { Mail, MailPersonalization } from '@/types/Mail.ts';
+import { loggerFactory } from '../logger/log4js';
+import { Mail, MailPersonalization } from '@/types/Mail';
 
 const logger = loggerFactory('MailHandler');
 

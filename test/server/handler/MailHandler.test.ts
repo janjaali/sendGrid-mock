@@ -2,7 +2,7 @@ import MailHandler from '../../../src/server/handler/MailHandler';
 import axios from 'axios';
 import {withMockedDate } from '../../MockDate';
 import crypto from 'crypto';
-import { Mail } from '@/types/Mail.ts';
+import { Mail } from '@/types/Mail';
 
 jest.mock('axios');
 

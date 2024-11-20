@@ -36,11 +36,12 @@ WORKDIR /usr/src/server
 # Copy package.json and package-lock.json
 COPY package*.json ./
 # Install only production dependencies
-RUN npm i
+RUN npm i --only=production
 # Copy transpiled js from builder stage into the final image
 COPY --from=builder /app/dist ./dist
-# Copy src/server into final image
-COPY src/server ./src/server
+
+# Copy build/src/server into final image
+COPY --from=builder /app/build/src/server ./src/server
 
 # port 80 is mandatory for webroot challenge
 # port 443 is mandatory for https
@@ -55,4 +56,4 @@ ENV NODE_ENV=production
 ENV API_KEY=sendgrid-api-key
 
 # the command which starts your express server.
-CMD ["npm", "run", "start"]
+CMD ["node", "./src/server/Server.js"]

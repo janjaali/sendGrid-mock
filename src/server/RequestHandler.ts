@@ -1,11 +1,10 @@
 import bodyParser from 'body-parser';
-import express, { Express, Request, Response, NextFunction } from 'express';
+import { Express, Request, Response, NextFunction } from 'express';
 import crypto from 'crypto';
 import {Validator, ValidationError} from 'express-json-validator-middleware';
-import MailHandler from '@/server/handler/MailHandler.ts';
+import MailHandler from '@/server/handler/MailHandler';
 
 import { JSONSchema7 } from 'json-schema';
-import { Mail } from '@/types/Mail.ts';
 
 const jsonSchema: Record<string, JSONSchema7> = {
   v3MailSend: {

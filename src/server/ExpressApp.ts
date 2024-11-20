@@ -2,9 +2,9 @@ import path from 'path';
 import express from 'express';
 import basicAuth from 'express-basic-auth';
 import { rateLimit } from 'express-rate-limit';
-import { loggerFactory } from './logger/log4js.ts';
-import RequestHandler from './RequestHandler.ts';
-import MailHandler from '@/server/handler/MailHandler.ts';
+import { loggerFactory } from './logger/log4js';
+import RequestHandler from './RequestHandler';
+import MailHandler from '@/server/handler/MailHandler';
 
 const logger = loggerFactory('ExpressApp');
 
