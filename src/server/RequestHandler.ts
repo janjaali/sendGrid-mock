@@ -144,10 +144,10 @@ const RequestHandler = (app: Express, apiAuthenticationKey: any, mailHandler: Ma
   // Error handler that returns a 400 status code if the request body does not
   // match the given json schema.
   app.use((
-      error: Error | ValidationError,
-      _: Request,
-      response: Response,
-      next: NextFunction
+    error: Error | ValidationError,
+    _: Request,
+    response: Response,
+    next: NextFunction
   )  => {
     if (error instanceof ValidationError) {
       const responseBody = {

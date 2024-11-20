@@ -122,7 +122,7 @@ class MailHandler {
         : () => true,
       filterCriteria?.dateTimeSince ?
         (mail: Mail) => mailSentAfter(mail, filterCriteria.dateTimeSince) :
-          () => true,
+        () => true,
     ];
 
     const paginationSize = paginationCriteria?.pageSize || 20;
@@ -154,32 +154,32 @@ class MailHandler {
   sendDeliveryEvents(mail: Mail, messageId: string) {
     const datetime = new Date();
     const deliveredEvents = mail.personalizations?.flatMap((personalization: MailPersonalization) => {
-        return personalization.to?.map(to => {
-          const categories = mail.categories ? mail.categories : [];
-          let event = {
-            email: to.email,
-            timestamp: datetime.getTime(),
-            event: 'delivered',
-            sg_event_id: crypto.randomUUID(),
-            sg_message_id: messageId,
-            category: categories,
-            "smtp-id": crypto.randomUUID(),
-          };
+      return personalization.to?.map(to => {
+        const categories = mail.categories ? mail.categories : [];
+        let event = {
+          email: to.email,
+          timestamp: datetime.getTime(),
+          event: 'delivered',
+          sg_event_id: crypto.randomUUID(),
+          sg_message_id: messageId,
+          category: categories,
+          'smtp-id': crypto.randomUUID(),
+        };
 
-          if (mail.custom_args || personalization.custom_args) {
-            const mailCustomArgs = mail.custom_args ? mail.custom_args : {};
-            const personalizationCustomArgs = personalization.custom_args ? personalization.custom_args : {};
-            //Override mail custom args with personalization custom args
-            const customArgs = Object.assign(mailCustomArgs, personalizationCustomArgs);
-            //Remove reserved keys for both mail and personalization custom args
-            RESERVED_KEYS.forEach(key => delete customArgs[key]);
+        if (mail.custom_args || personalization.custom_args) {
+          const mailCustomArgs = mail.custom_args ? mail.custom_args : {};
+          const personalizationCustomArgs = personalization.custom_args ? personalization.custom_args : {};
+          //Override mail custom args with personalization custom args
+          const customArgs = Object.assign(mailCustomArgs, personalizationCustomArgs);
+          //Remove reserved keys for both mail and personalization custom args
+          RESERVED_KEYS.forEach(key => delete customArgs[key]);
 
-            event = Object.assign(event, customArgs);
-          }
+          event = Object.assign(event, customArgs);
+        }
 
-          return event;
-        });
+        return event;
       });
+    });
     if (!process.env.EVENT_DELIVERY_URL) {
       throw new Error('EVENT_DELIVERY_URL is not set');
     }
@@ -192,7 +192,7 @@ class MailHandler {
 
     const filters = [
       filterCriteria?.to ?
-            (mail: Mail) => mailSentTo(mail, filterCriteria.to)
+        (mail: Mail) => mailSentTo(mail, filterCriteria.to)
         : () => true,
     ];
 
