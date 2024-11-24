@@ -33,7 +33,7 @@
     "src/**/*.js",
     "src/**/*.jsx",
     "eslint.config.mjs",
-    "test/**/*.ts",
+    "test/**/*.ts"
   ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
