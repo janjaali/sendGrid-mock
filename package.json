@@ -16,7 +16,6 @@
   "scripts": {
     "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\"",
     "test": "jest",
-    "start": "node ./build/src/server/Server.js",
     "server-dev": "cross-env API_KEY=sendgrid-api-key MAIL_HISTORY_DURATION=PT24H tsx ./src/server/Server.ts",
     "ui-dev": "parcel ./src/ui/index.html",
     "dev": "concurrently \"npm run server-dev\" \"npm run ui-dev\"",
