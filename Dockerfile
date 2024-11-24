@@ -1,4 +1,4 @@
-FROM node:16-alpine as node
+FROM node:22-alpine AS node
 
 # Build stage
 FROM node AS builder
@@ -9,6 +9,8 @@ ENV DOCKER_BUILD="true"
 # the directory for your app within the docker image
 # NOTE: if you need to change this, change the $CERT_WEBROOT_PATH env
 WORKDIR /app
+
+RUN apk add --no-cache python3 make g++
 
 ######################################################################################
 # Add your own Dockerfile entries here
@@ -23,7 +25,7 @@ FROM node
 # Update the system
 RUN apk --no-cache -U upgrade
 # adds the packages certbot and tini
-RUN apk add --no-cache certbot tini
+RUN apk add --no-cache certbot tini python3 make g++
 ENTRYPOINT ["/sbin/tini", "--"]
 
 # copy and chmod the shell script which will initiate the webroot
@@ -37,8 +39,9 @@ COPY package*.json ./
 RUN npm i --only=production
 # Copy transpiled js from builder stage into the final image
 COPY --from=builder /app/dist ./dist
-# Copy src/server into final image 
-COPY src/server ./src/server
+
+# Copy build/src/server into final image
+COPY --from=builder /app/build/src/server ./src/server
 
 # port 80 is mandatory for webroot challenge
 # port 443 is mandatory for https

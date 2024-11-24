@@ -5,6 +5,9 @@ node_modules
 .parcel-cache
 dist
 
+# build TS
+build
+
 # VS Code
 .vscode
 

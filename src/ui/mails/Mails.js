@@ -30,7 +30,7 @@ class Mails extends React.Component {
   }
 
   deleteAllMails() {
-    
+
     console.info('Command to delete all mails.');
 
     fetch('/api/mails', {method: 'DELETE'})
@@ -121,7 +121,7 @@ class Mails extends React.Component {
     const selectedEmailType = this.state.type;
 
     return (
-      
+
       <>
         <div style={{textAlign: 'center'}}>
           <h1>SENDGRID-MOCK</h1>

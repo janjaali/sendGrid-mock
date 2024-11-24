@@ -1,13 +1,12 @@
-const {withMockedDate} = require('../../MockDate');
+import MailHandler from '../../../src/server/handler/MailHandler';
+import axios from 'axios';
+import {withMockedDate } from '../../MockDate';
+import crypto from 'crypto';
+import { Mail } from '@/types/Mail';
 
-const axios = require('axios');
 jest.mock('axios');
 
-const crypto = require('crypto');
-
-const MailHandler = require('../../../src/server/handler/MailHandler');
-
-const testMail = {
+const testMail: Mail = {
   'personalizations': [
     {
       'to': [{
@@ -70,7 +69,7 @@ describe('MailHandler', () => {
 
         const secondMailDatetime = new Date('2020-01-02T00:00:01Z');
         withMockedDate(secondMailDatetime, () => sut.addMail(testMail));
-    
+
         const remainingMails = sut.getMails();
 
         expect(remainingMails).toStrictEqual(
@@ -87,7 +86,7 @@ describe('MailHandler', () => {
 
         const secondMailDatetime = new Date('2020-01-01T00:00:11Z');
         withMockedDate(secondMailDatetime, () => sut.addMail(testMail));
-    
+
         const remainingMails = sut.getMails();
 
         expect(remainingMails).toStrictEqual(
@@ -144,7 +143,7 @@ describe('MailHandler', () => {
               }]
             }
           ],
-          'subject': 'like the wind',        
+          'subject': 'like the wind',
         };
 
         const addedMailDateTime = new Date('2020-01-01');
@@ -263,20 +262,20 @@ describe('MailHandler', () => {
         });
 
         expect(sut.getMails({
-          to: '%sonic%', 
-          subject: '%import%', 
+          to: '%sonic%',
+          subject: '%import%',
           dateTimeSince: '2020-01-02'
         })).toStrictEqual([]);
 
         expect(sut.getMails({
-          to: '%sonic%', 
-          subject: '%wind%', 
+          to: '%sonic%',
+          subject: '%wind%',
           dateTimeSince: '2020-01-02'
         })).toStrictEqual([]);
 
         expect(sut.getMails({
-          to: '%sonic%', 
-          subject: 'like the wind', 
+          to: '%sonic%',
+          subject: 'like the wind',
           dateTimeSince: '2019-12-31'
         })).toStrictEqual([
           {...mail, datetime: addedMailDateTime}
@@ -289,7 +288,7 @@ describe('MailHandler', () => {
       test('page size according to given page size', () => {
 
         const sut = new MailHandler();
-    
+
         const addedMailDateTime = new Date('2020-01-01');
         withMockedDate(addedMailDateTime, () => {
           sut.addMail({...testMail, subject: '1'});
@@ -307,7 +306,7 @@ describe('MailHandler', () => {
       test('page according to given page', () => {
 
         const sut = new MailHandler();
-    
+
         const addedMailDateTime = new Date('2020-01-01');
         withMockedDate(addedMailDateTime, () => {
           sut.addMail({...testMail, subject: '1'});
@@ -349,7 +348,7 @@ describe('MailHandler', () => {
 
       const filteredAndPagedMails = sut.getMails(
         {
-          to: '%sonic%', 
+          to: '%sonic%',
         },
         {
           pageSize: 1,
@@ -383,7 +382,7 @@ describe('MailHandler', () => {
 
       const sut = new MailHandler();
 
-      const mail = {
+      const mail: Mail = {
         'personalizations': [
           {
             'to': [{
@@ -393,7 +392,7 @@ describe('MailHandler', () => {
             }]
           }
         ],
-        'subject': 'like the wind',        
+        'subject': 'like the wind',
       };
 
       const addedMailDateTime = new Date('2020-01-01');
@@ -426,17 +425,17 @@ describe('MailHandler', () => {
       test('send delivery events', () => {
         const sut = new MailHandler();
 
-        axios.post.mockResolvedValue({data: {message: 'success'}});
+        (axios.post as jest.Mock).mockResolvedValue({data: {message: 'success'}});
 
         const messageId = crypto.randomUUID();
 
         sut.addMail(testMail, messageId);
 
-        expect(axios.post.mock.calls[0][0]).toEqual(process.env.EVENT_DELIVERY_URL);
-        const eventData = axios.post.mock.calls[0][1];
+        expect((axios.post as jest.Mock).mock.calls[0][0]).toEqual(process.env.EVENT_DELIVERY_URL);
+        const eventData = (axios.post as jest.Mock).mock.calls[0][1];
         expect(eventData.length).toBe(2);
         expect(eventData[0]).toMatchObject({
-          email: testMail.personalizations[0].to[0].email,
+          email: testMail.personalizations?.[0].to?.[0].email,
           event: 'delivered',
           timestamp: expect.any(Number),
           sg_event_id: expect.any(String),
@@ -449,12 +448,12 @@ describe('MailHandler', () => {
       test('send delivery events with defaulted messageId', () => {
         const sut = new MailHandler();
 
-        axios.post.mockResolvedValue({data: {message: 'success'}});
+        (axios.post as jest.Mock).mockResolvedValue({data: {message: 'success'}});
 
         sut.addMail(testMail);
 
-        expect(axios.post.mock.calls[0][0]).toEqual(process.env.EVENT_DELIVERY_URL);
-        const eventData = axios.post.mock.calls[0][1];
+        expect((axios.post as jest.Mock).mock.calls[0][0]).toEqual(process.env.EVENT_DELIVERY_URL);
+        const eventData = (axios.post as jest.Mock).mock.calls[0][1];
         expect(eventData.length).toBe(2);
         expect(eventData[0]).toMatchObject({
           sg_message_id: expect.any(String),
@@ -466,12 +465,12 @@ describe('MailHandler', () => {
         test('single category array is returned as an array', () => {
           const sut = new MailHandler();
 
-          axios.post.mockResolvedValue({data: {message: 'success'}});
+          (axios.post as jest.Mock).mockResolvedValue({data: {message: 'success'}});
 
           sut.addMail(testMail);
 
-          expect(axios.post.mock.calls[0][0]).toEqual(process.env.EVENT_DELIVERY_URL);
-          const eventData = axios.post.mock.calls[0][1];
+          expect((axios.post as jest.Mock).mock.calls[0][0]).toEqual(process.env.EVENT_DELIVERY_URL);
+          const eventData = (axios.post as jest.Mock).mock.calls[0][1];
           expect(eventData.length).toBe(2);
           expect(eventData[0]).toMatchObject({
             category: ['important']
@@ -485,12 +484,12 @@ describe('MailHandler', () => {
           delete mailWithoutCategories.categories;
           const sut = new MailHandler();
 
-          axios.post.mockResolvedValue({data: {message: 'success'}});
+          (axios.post as jest.Mock).mockResolvedValue({data: {message: 'success'}});
 
           sut.addMail(mailWithoutCategories);
 
-          expect(axios.post.mock.calls[0][0]).toEqual(process.env.EVENT_DELIVERY_URL);
-          const eventData = axios.post.mock.calls[0][1];
+          expect((axios.post as jest.Mock).mock.calls[0][0]).toEqual(process.env.EVENT_DELIVERY_URL);
+          const eventData = (axios.post as jest.Mock).mock.calls[0][1];
           expect(eventData.length).toBe(2);
           expect(eventData[0]).toMatchObject({
             category: [],
@@ -506,12 +505,12 @@ describe('MailHandler', () => {
           };
           const sut = new MailHandler();
 
-          axios.post.mockResolvedValue({data: {message: 'success'}});
+          (axios.post as jest.Mock).mockResolvedValue({data: {message: 'success'}});
 
           sut.addMail({...testMail, custom_args: customArgs});
 
-          expect(axios.post.mock.calls[0][0]).toEqual(process.env.EVENT_DELIVERY_URL);
-          const eventData = axios.post.mock.calls[0][1];
+          expect((axios.post as jest.Mock).mock.calls[0][0]).toEqual(process.env.EVENT_DELIVERY_URL);
+          const eventData = (axios.post as jest.Mock).mock.calls[0][1];
           expect(eventData.length).toBe(2);
 
           expect(eventData[0]['user_id']).toEqual('12345');
@@ -535,13 +534,13 @@ describe('MailHandler', () => {
 
           const sut = new MailHandler();
 
-          axios.post.mockResolvedValue({data: {message: 'success'}});
+          (axios.post as jest.Mock).mockResolvedValue({data: {message: 'success'}});
 
           sut.addMail({...testMail, custom_args: customArgs});
 
-          expect(axios.post.mock.calls[0][0]).toEqual(process.env.EVENT_DELIVERY_URL);
+          expect((axios.post as jest.Mock).mock.calls[0][0]).toEqual(process.env.EVENT_DELIVERY_URL);
 
-          const eventData = axios.post.mock.calls[0][1];
+          const eventData = (axios.post as jest.Mock).mock.calls[0][1];
           expect(eventData.length).toBe(2);
 
           expect(eventData[0]['email']).toEqual('to@example.com');
@@ -566,21 +565,22 @@ describe('MailHandler', () => {
 
       describe('send delivery events with custom args at the personalization level', () => {
         test('custom args are added to the event', () => {
-          const mailWithCustomArgs = {...testMail};
+          const mailWithCustomArgs: Mail = {...testMail};
 
-          mailWithCustomArgs['personalizations'][0]['custom_args'] = {
+          // @ts-ignore
+          mailWithCustomArgs.personalizations[0]['custom_args'] = {
             'user_id': '2455',
             'purchase': 'gold'
           };
 
           const sut = new MailHandler();
 
-          axios.post.mockResolvedValue({data: {message: 'success'}});
+          (axios.post as jest.Mock).mockResolvedValue({data: {message: 'success'}});
 
           sut.addMail(mailWithCustomArgs);
 
-          expect(axios.post.mock.calls[0][0]).toEqual(process.env.EVENT_DELIVERY_URL);
-          const eventData = axios.post.mock.calls[0][1];
+          expect((axios.post as jest.Mock).mock.calls[0][0]).toEqual(process.env.EVENT_DELIVERY_URL);
+          const eventData = (axios.post as jest.Mock).mock.calls[0][1];
           expect(eventData.length).toBe(2);
 
           expect(eventData[0]['user_id']).toEqual('2455');
@@ -590,6 +590,7 @@ describe('MailHandler', () => {
         test('personalization custom args override mail custom args', () => {
           const mailWithCustomArgs = {...testMail};
 
+          // @ts-ignore
           mailWithCustomArgs['personalizations'][0]['custom_args'] = {
             'user_id': '2455',
             'purchase': 'gold'
@@ -602,12 +603,12 @@ describe('MailHandler', () => {
 
           const sut = new MailHandler();
 
-          axios.post.mockResolvedValue({data: {message: 'success'}});
+          (axios.post as jest.Mock).mockResolvedValue({data: {message: 'success'}});
 
           sut.addMail(mailWithCustomArgs);
 
-          expect(axios.post.mock.calls[0][0]).toEqual(process.env.EVENT_DELIVERY_URL);
-          const eventData = axios.post.mock.calls[0][1];
+          expect((axios.post as jest.Mock).mock.calls[0][0]).toEqual(process.env.EVENT_DELIVERY_URL);
+          const eventData = (axios.post as jest.Mock).mock.calls[0][1];
           expect(eventData.length).toBe(2);
 
           expect(eventData[0]['user_id']).toEqual('2455');
@@ -617,6 +618,7 @@ describe('MailHandler', () => {
         test('personalization custom args do not override reserved fields', () => {
           const mailWithCustomArgs = {...testMail};
 
+          // @ts-ignore
           mailWithCustomArgs['personalizations'][0]['custom_args'] = {
             'email': '12345',
             'timestamp': 12345,
@@ -630,12 +632,12 @@ describe('MailHandler', () => {
 
           const sut = new MailHandler();
 
-          axios.post.mockResolvedValue({data: {message: 'success'}});
+          (axios.post as jest.Mock).mockResolvedValue({data: {message: 'success'}});
 
           sut.addMail(mailWithCustomArgs);
 
-          expect(axios.post.mock.calls[0][0]).toEqual(process.env.EVENT_DELIVERY_URL);
-          const eventData = axios.post.mock.calls[0][1];
+          expect((axios.post as jest.Mock).mock.calls[0][0]).toEqual(process.env.EVENT_DELIVERY_URL);
+          const eventData = (axios.post as jest.Mock).mock.calls[0][1];
           expect(eventData.length).toBe(2);
 
           expect(eventData[0]['email']).toEqual('to@example.com');

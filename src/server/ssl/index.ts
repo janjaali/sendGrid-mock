@@ -1,15 +1,15 @@
-const express = require('express');
-const fs = require('fs');
-const http = require('http');
-const https = require('https');
-const { loggerFactory } = require('../logger/log4js');
-const path = require('path');
-const { spawn } = require('child_process');
-const sanitize = require('sanitize-filename');
-const { rateLimit } = require('express-rate-limit');
+import express from 'express';
+import fs from 'fs';
+import http from 'http';
+import https from 'https';
+import path from 'path';
+import { spawn } from 'child_process';
+import sanitize from 'sanitize-filename';
+import { rateLimit } from 'express-rate-limit';
+import { loggerFactory } from '../logger/log4js';
 
-/** Binds an existing Express server application with SSL certificate to 
- * provide it via HTTPS using Certbot and Let's Encrypt. This implementation is 
+/** Binds an existing Express server application with SSL certificate to
+ * provide it via HTTPS using Certbot and Let's Encrypt. This implementation is
  * heavenly inspired by the excellent work of https://github.com/AppSaloon/auto-ssl. */
 
 const logger = loggerFactory('SSL');
@@ -28,19 +28,21 @@ const readCertificate = () => {
       key: fs.readFileSync(privateKeyPath, 'utf8'),
       cert: fs.readFileSync(pemFilePath, 'utf8')
     };
-  } catch (e) {
+  } catch {
     return undefined;
   }
 };
 
-const watchCertificateFiles = (httpsServer) => {
+const watchCertificateFiles = (httpsServer: https.Server) => {
 
   try {
     fs.watch(archivePath, () => {
       const newPrivateKey = fs.readFileSync(privateKeyPath, 'utf8');
       const newPem = fs.readFileSync(pemFilePath, 'utf8');
 
+      // @ts-ignore
       httpsServer._sharedCreds.context.setCert(newPem);
+      // @ts-ignore
       httpsServer._sharedCreds.context.setKey(newPrivateKey);
     });
   } catch (e) {
@@ -48,9 +50,12 @@ const watchCertificateFiles = (httpsServer) => {
   }
 };
 
-const createAndStartHttpsServer = (expressApp, certificate) => {
+const createAndStartHttpsServer = (expressApp: http.RequestListener | undefined, certificate: { key: string; cert: string; } | https.ServerOptions | undefined) => {
 
   const httpsPort = 443;
+  if (!certificate) {
+    throw new Error('certificate is not defined');
+  }
   const httpsServer = https.createServer(certificate, expressApp);
   httpsServer.listen(httpsPort, () => {
     logger.info(`HTTPS server listens on port ${httpsPort}.`);
@@ -59,25 +64,25 @@ const createAndStartHttpsServer = (expressApp, certificate) => {
   return httpsServer;
 };
 
-const asHttpsServer = (expressApp, rateLimitConfiguration) => {
+const asHttpsServer = (expressApp: http.RequestListener | undefined, rateLimitConfiguration: { enabled: any; windowInMs: any; maxRequests: any; }) => {
 
   const httpToHttpsForwardingExpressApp = express();
   const webrootExpressApp = express();
 
   if (rateLimitConfiguration.enabled) {
-  
+
     const rateLimitWindowInMs = rateLimitConfiguration.windowInMs;
     const rateLimitMaxRequests = rateLimitConfiguration.maxRequests;
-  
+
     logger.info(`Rate limit enabled with ${rateLimitMaxRequests} requests per ${rateLimitWindowInMs} ms.`);
-  
+
     const definedRateLimit = rateLimit({
       windowMs: rateLimitWindowInMs,
       max: rateLimitMaxRequests,
       standardHeaders: true,
     });
-  
-    httpToHttpsForwardingExpressApp.use(definedRateLimit);  
+
+    httpToHttpsForwardingExpressApp.use(definedRateLimit);
     webrootExpressApp.use(definedRateLimit);
   } else {
     logger.warn('Rate limit is disabled!');
@@ -138,11 +143,11 @@ const asHttpsServer = (expressApp, rateLimitConfiguration) => {
     initServer.on('close', code => {
 
       if (code === 0) {
-        logger.info('Certificate created, starting to create HTTPS server.');	
+        logger.info('Certificate created, starting to create HTTPS server.');
 
         const certificate = readCertificate();
         const httpsServer = createAndStartHttpsServer(expressApp, certificate);
-  
+
         logger.info('Starting to watch certificate files.');
         watchCertificateFiles(httpsServer);
       } else {
@@ -154,4 +159,4 @@ const asHttpsServer = (expressApp, rateLimitConfiguration) => {
   return webrootServer;
 };
 
-module.exports = asHttpsServer;
+export default asHttpsServer;
