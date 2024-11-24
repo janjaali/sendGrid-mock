@@ -23,7 +23,7 @@ const mailHandler = new MailHandler(process.env.MAIL_HISTORY_DURATION);
 
 const apiAuthentication = process.env.AUTHENTICATION
   ? { enabled: true, users: authenticationUsers(process.env.AUTHENTICATION) }
-  : { enabled: false, users: {} };
+  : { enabled: false };
 
 const rateLimitConfiguration = {
   enabled: process.env.RATE_LIMIT_ENABLED === 'true',
