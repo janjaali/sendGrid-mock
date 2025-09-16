@@ -10,6 +10,8 @@ ENV DOCKER_BUILD="true"
 # NOTE: if you need to change this, change the $CERT_WEBROOT_PATH env
 WORKDIR /app
 
+RUN apk add --no-cache python3 make g++
+
 ######################################################################################
 # Add your own Dockerfile entries here
 ######################################################################################
@@ -23,7 +25,7 @@ FROM node
 # Update the system
 RUN apk --no-cache -U upgrade
 # adds the packages certbot and tini
-RUN apk add --no-cache certbot tini
+RUN apk add --no-cache certbot tini python3 make g++
 ENTRYPOINT ["/sbin/tini", "--"]
 
 # copy and chmod the shell script which will initiate the webroot
