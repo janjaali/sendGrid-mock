@@ -25,7 +25,7 @@ FROM node
 # Update the system
 RUN apk --no-cache -U upgrade
 # adds the packages certbot and tini
-RUN apk add --no-cache certbot tini python3 make g++
+RUN apk add --no-cache certbot tini
 ENTRYPOINT ["/sbin/tini", "--"]
 
 # copy and chmod the shell script which will initiate the webroot
