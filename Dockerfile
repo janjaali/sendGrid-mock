@@ -10,6 +10,8 @@ ENV DOCKER_BUILD="true"
 # NOTE: if you need to change this, change the $CERT_WEBROOT_PATH env
 WORKDIR /app
 
+RUN apk add --no-cache python3 make g++
+
 ######################################################################################
 # Add your own Dockerfile entries here
 ######################################################################################
