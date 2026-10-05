@@ -44,6 +44,8 @@ SendGrid-Mock serves as a simple server mocking the sendgrid-apis for developmen
 
 * By default, all emails older than 24 hours will be deleted. This can be configured using environment variable `MAIL_HISTORY_DURATION` which uses [ISO-8601 Duration format](https://en.wikipedia.org/wiki/ISO_8601#Durations) such as *'PT24H'*.
 
+* By default, the number of stored emails is unlimited (apart from the age limit above). The newest emails are kept and the oldest are dropped when the limit is exceeded. This can be configured using environment variable `MAX_MAIL_COUNT`, such as *'500'*.
+
 * Event support: Add basic [event](https://www.twilio.com/docs/sendgrid/for-developers/tracking-events/event#events) support by specifying the environment variable `EVENT_DELIVERY_URL`. When set, [delivered](https://www.twilio.com/docs/sendgrid/for-developers/tracking-events/event#delivered) events will be sent to the specified webhook URL when an email is sent.
 
 ## Dockerized
