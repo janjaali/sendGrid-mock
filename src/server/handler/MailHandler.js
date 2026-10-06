@@ -54,7 +54,8 @@ const mailSentTo = (mail, to) => {
 
 const mailContainSubject = (mail, subject) => {
   
-  const actualSubject = mail.subject;
+  // Mails sent using a template may not have a subject.
+  const actualSubject = mail.subject ?? '';
   
   if (subject.startsWith('%') && subject.endsWith('%')) {
     const searchSubject = subject.substring(1, subject.length - 1);
