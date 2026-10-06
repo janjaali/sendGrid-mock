@@ -2,6 +2,8 @@ const {loggerFactory} = require('../logger/log4js');
 
 const axios = require('axios');
 const crypto = require('crypto');
+const fs = require('fs');
+const path = require('path');
 
 const logger = loggerFactory('MailHandler');
 
@@ -97,7 +99,14 @@ class MailHandler {
 
   #maxMails = Infinity;
 
-  constructor(mailRetentionDuration, maxMails) {
+  #storagePath = undefined;
+
+  #saveTimer = undefined;
+
+  // Writes are debounced, since the whole mail list is rewritten on every save.
+  #saveDelayInMs = 1000;
+
+  constructor(mailRetentionDuration, maxMails, storagePath) {
 
     const parsedMaxMails = parseInt(maxMails, 10);
     if (parsedMaxMails > 0) {
@@ -108,6 +117,11 @@ class MailHandler {
       this.#mailRetentionDurationInSeconds = parseDurationStringAsSeconds(
         mailRetentionDuration
       ); 
+    }
+
+    if (storagePath) {
+      this.#storagePath = storagePath;
+      this.#load();
     }
   }
 
@@ -139,12 +153,8 @@ class MailHandler {
 
     this.#mails = [mailWithTimestamp(mail), ...this.#mails];
 
-    const maxRetentionTime = Date.now() - (this.#mailRetentionDurationInSeconds * 1000);
-    this.#mails = this.#mails.filter(mail => {
-      return Date.parse(mail.datetime).valueOf() >= maxRetentionTime;
-    })
-      // Newest mails are first, so the oldest ones are dropped when over the limit.
-      .slice(0, this.#maxMails);
+    this.#applyRetention();
+    this.#scheduleSave();
 
     if (process.env.EVENT_DELIVERY_URL) {
       this.sendDeliveryEvents(mail, messageId);
@@ -198,6 +208,91 @@ class MailHandler {
     ];
 
     this.#mails = this.#mails.filter(mail => !filters.some(filter => filter(mail)));
+    this.#scheduleSave();
+  }
+
+  /**
+   * Writes the mails to the configured storage path right away. Does nothing if
+   * no storage path is configured. Errors are logged and never thrown, since
+   * failing to persist must not fail a request.
+   */
+  flush() {
+
+    if (!this.#storagePath) {
+      return;
+    }
+
+    if (this.#saveTimer) {
+      clearTimeout(this.#saveTimer);
+      this.#saveTimer = undefined;
+    }
+
+    // Write to a temporary file first so a crash mid-write can't corrupt the stored mails.
+    const temporaryPath = `${this.#storagePath}.tmp`;
+
+    try {
+      fs.mkdirSync(path.dirname(this.#storagePath), { recursive: true });
+      fs.writeFileSync(temporaryPath, JSON.stringify(this.#mails));
+      fs.renameSync(temporaryPath, this.#storagePath);
+    } catch (error) {
+      logger.error(`Failed to store mails at ${this.#storagePath}`, error);
+    }
+  }
+
+  #applyRetention() {
+
+    const maxRetentionTime = Date.now() - (this.#mailRetentionDurationInSeconds * 1000);
+
+    this.#mails = this.#mails
+      .filter(mail => Date.parse(mail.datetime).valueOf() >= maxRetentionTime)
+      // Newest mails are first, so the oldest ones are dropped when over the limit.
+      .slice(0, this.#maxMails);
+  }
+
+  #scheduleSave() {
+
+    if (!this.#storagePath || this.#saveTimer) {
+      return;
+    }
+
+    this.#saveTimer = setTimeout(() => {
+      this.#saveTimer = undefined;
+      this.flush();
+    }, this.#saveDelayInMs);
+
+    // Don't keep the process alive just for a pending save.
+    this.#saveTimer.unref();
+  }
+
+  #load() {
+
+    let stored;
+
+    try {
+      stored = fs.readFileSync(this.#storagePath, 'utf8');
+    } catch (error) {
+      if (error.code !== 'ENOENT') {
+        logger.error(`Failed to read stored mails from ${this.#storagePath}, starting empty`, error);
+      }
+      return;
+    }
+
+    try {
+      const parsed = JSON.parse(stored);
+
+      if (!Array.isArray(parsed)) {
+        throw new Error('stored mails are not an array');
+      }
+
+      // JSON turns the datetime into a string, but the filters compare it as a Date.
+      this.#mails = parsed.map(mail => ({ ...mail, datetime: new Date(mail.datetime) }));
+      this.#applyRetention();
+
+      logger.info(`Loaded ${this.#mails.length} stored mails from ${this.#storagePath}`);
+    } catch (error) {
+      logger.error(`Stored mails at ${this.#storagePath} are not valid, starting empty`, error);
+      this.#mails = [];
+    }
   }
 }
 

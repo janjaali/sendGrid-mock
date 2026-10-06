@@ -4,6 +4,9 @@ const axios = require('axios');
 jest.mock('axios');
 
 const crypto = require('crypto');
+const fs = require('fs');
+const os = require('os');
+const path = require('path');
 
 const MailHandler = require('../../../src/server/handler/MailHandler');
 
@@ -438,6 +441,119 @@ describe('MailHandler', () => {
       expect(remainingMails).toStrictEqual([
         {...testMail, datetime: addedMailDateTime},
       ]);
+    });
+  });
+
+  describe('persist mails', () => {
+
+    let storageDirectory;
+    let storagePath;
+
+    beforeEach(() => {
+      storageDirectory = fs.mkdtempSync(path.join(os.tmpdir(), 'sendgrid-mock-'));
+      storagePath = path.join(storageDirectory, 'mails.json');
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
+      fs.rmSync(storageDirectory, { recursive: true, force: true });
+    });
+
+    test('if no storage path is configured, nothing is written', () => {
+
+      const sut = new MailHandler();
+
+      sut.addMail(testMail);
+      sut.flush();
+
+      expect(fs.readdirSync(storageDirectory).length).toBe(0);
+    });
+
+    test('mails are restored by a new instance, with datetime as a Date', () => {
+
+      const first = new MailHandler(undefined, undefined, storagePath);
+      first.addMail(testMail);
+      first.flush();
+
+      const second = new MailHandler(undefined, undefined, storagePath);
+
+      const restored = second.getMails();
+      expect(restored.length).toBe(1);
+      expect(restored[0].datetime).toBeInstanceOf(Date);
+      expect(restored[0]).toMatchObject(testMail);
+
+      // filtering by time relies on datetime being a Date
+      expect(second.getMails({dateTimeSince: '2000-01-01T00:00:00Z'}).length).toBe(1);
+    });
+
+    test('mails are written after a delay, not on every change', () => {
+
+      jest.useFakeTimers();
+
+      const sut = new MailHandler(undefined, undefined, storagePath);
+
+      sut.addMail(testMail);
+      sut.addMail(testMail);
+      expect(fs.existsSync(storagePath)).toBe(false);
+
+      jest.advanceTimersByTime(1000);
+
+      expect(JSON.parse(fs.readFileSync(storagePath, 'utf8')).length).toBe(2);
+    });
+
+    test('clearing mails is persisted', () => {
+
+      const first = new MailHandler(undefined, undefined, storagePath);
+      first.addMail(testMail);
+      first.clear();
+      first.flush();
+
+      expect(new MailHandler(undefined, undefined, storagePath).getMails()).toStrictEqual([]);
+    });
+
+    test('expired mails and mails over the limit are dropped on load', () => {
+
+      const mail = (subject, datetime) => ({...testMail, subject, datetime});
+      const now = Date.now();
+
+      fs.writeFileSync(storagePath, JSON.stringify([
+        mail('newest', new Date(now).toISOString()),
+        mail('newer', new Date(now - 1000).toISOString()),
+        mail('expired', new Date(now - 3 * 60 * 60 * 1000).toISOString()),
+      ]));
+
+      const sut = new MailHandler('PT1H', '1', storagePath);
+
+      expect(sut.getMails().map(m => m.subject)).toStrictEqual(['newest']);
+    });
+
+    test.each([
+      ['not json', 'this is not json'],
+      ['not an array', '{"mails": []}'],
+    ])('if the stored file is %s, start empty and keep working', (_, content) => {
+
+      fs.writeFileSync(storagePath, content);
+
+      const sut = new MailHandler(undefined, undefined, storagePath);
+      expect(sut.getMails()).toStrictEqual([]);
+
+      sut.addMail(testMail);
+      sut.flush();
+
+      expect(new MailHandler(undefined, undefined, storagePath).getMails().length).toBe(1);
+    });
+
+    test('if the storage location is not writable, mails are still kept in memory', () => {
+
+      // a path below a regular file can never be created
+      const blocker = path.join(storageDirectory, 'blocker');
+      fs.writeFileSync(blocker, '');
+
+      const sut = new MailHandler(undefined, undefined, path.join(blocker, 'mails.json'));
+
+      expect(() => sut.addMail(testMail)).not.toThrow();
+      expect(() => sut.flush()).not.toThrow();
+      expect(sut.getMails().length).toBe(1);
     });
   });
 
