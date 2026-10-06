@@ -1,6 +1,7 @@
 const { loggerFactory } = require('./logger/log4js');
 const { setupExpressApp } = require('./ExpressApp');
 const MailHandler = require('./handler/MailHandler');
+const TemplateHandler = require('./handler/TemplateHandler');
 const asHttpsServer = require('./ssl/index');
 
 const logger = loggerFactory('Server');
@@ -23,6 +24,12 @@ const authenticationUsers = (usersString) => {
 
 const mailHandler = new MailHandler(process.env.MAIL_HISTORY_DURATION);
 
+const templateHandler = new TemplateHandler({
+  apiKey: process.env.SENDGRID_TEMPLATE_API_KEY,
+  baseUrl: process.env.SENDGRID_TEMPLATE_BASE_URL,
+  cacheTtl: process.env.TEMPLATE_CACHE_TTL,
+});
+
 const apiAuthentication = process.env.AUTHENTICATION
   ? { enabled: true, users: authenticationUsers(process.env.AUTHENTICATION) }
   : { enabled: false };
@@ -38,6 +45,7 @@ const app = setupExpressApp(
   apiAuthentication, 
   process.env.API_KEY,
   rateLimitConfiguration,
+  templateHandler,
 );
 
 const enableSsl = process.env.CERT_DOMAINNAMES && process.env.CERT_EMAIL ? true : false;

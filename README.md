@@ -23,6 +23,8 @@ SendGrid-Mock serves as a simple server mocking the sendgrid-apis for developmen
   * Filter capabilities are included and can be combined:
     * **To**: `DELETE /api/mails?to=email@address.com`
 
+* Get template information `GET /v3/templates/:id` (requires the same `Authorization: Bearer <API_KEY>` header as sending). Senders that look up a template's active version, such as its subject, before sending can use this. See [Templates](#templates).
+
 ### UI
 
 * Retrieve sent mails and display them
@@ -43,6 +45,11 @@ SendGrid-Mock serves as a simple server mocking the sendgrid-apis for developmen
   * `SSL_RATE_LIMIT_MAX_REQUESTS`: The maximum number of requests allowed in the time window (default: `100`)
 
 * By default, all emails older than 24 hours will be deleted. This can be configured using environment variable `MAIL_HISTORY_DURATION` which uses [ISO-8601 Duration format](https://en.wikipedia.org/wiki/ISO_8601#Durations) such as *'PT24H'*.
+
+* <a id="templates"></a>Templates: by default `GET /v3/templates/:id` returns a generic stub with one active version. To return the real templates, set `SENDGRID_TEMPLATE_API_KEY` to a SendGrid API key that is only allowed to read templates (*Template Engine: Read*; it does not need, and should not have, *Mail Send*). Templates are then fetched from SendGrid and returned unchanged:
+  * `SENDGRID_TEMPLATE_BASE_URL`: SendGrid API base URL (default: `https://api.sendgrid.com/v3`)
+  * `TEMPLATE_CACHE_TTL`: how long a fetched template is cached, in [ISO-8601 Duration format](https://en.wikipedia.org/wiki/ISO_8601#Durations) (default: `PT1H`)
+  * If SendGrid cannot be reached (network error or 5xx) the last cached template is returned even if expired, otherwise the stub. Definite answers such as `404` or `401` are passed through. The `X-Mock-Template-Source` response header tells where the answer came from: `upstream`, `cache`, `stale` or `stub`.
 
 * Event support: Add basic [event](https://www.twilio.com/docs/sendgrid/for-developers/tracking-events/event#events) support by specifying the environment variable `EVENT_DELIVERY_URL`. When set, [delivered](https://www.twilio.com/docs/sendgrid/for-developers/tracking-events/event#delivered) events will be sent to the specified webhook URL when an email is sent.
 

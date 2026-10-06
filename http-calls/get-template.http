@@ -1,0 +1,2 @@
+GET http://localhost:3000/v3/templates/d-0123456789abcdef
+Authorization: Bearer sendgrid-api-key
