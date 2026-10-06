@@ -68,8 +68,9 @@ const mailSentTo = (mail, to) => {
 
 const mailContainSubject = (mail, subject) => {
   
-  // Mails sent using a template may not have a subject.
-  const actualSubject = mail.subject ?? '';
+  // Mails sent using a template may not have a top-level subject, in which
+  // case SendGrid takes it from the personalization.
+  const actualSubject = mail.subject ?? mail.personalizations?.[0]?.subject ?? '';
   
   if (subject.startsWith('%') && subject.endsWith('%')) {
     const searchSubject = subject.substring(1, subject.length - 1);

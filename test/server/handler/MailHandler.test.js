@@ -228,6 +228,38 @@ describe('MailHandler', () => {
         );
       });
 
+      test('filter by subject falls back to the personalization subject', () => {
+
+        const sut = new MailHandler();
+
+        const personalizationSubjectMail = {
+          'personalizations': [{'to': [{'email': 'a@example.com'}], 'subject': 'Activate Your Account'}],
+          'from': {'email': 'from@example.com'},
+          'template_id': 'd-123',
+        };
+        const bothSubjectsMail = {
+          'personalizations': [{'to': [{'email': 'b@example.com'}], 'subject': 'inner subject'}],
+          'from': {'email': 'from@example.com'},
+          'subject': 'outer subject',
+          'template_id': 'd-456',
+        };
+
+        const addedMailDateTime = new Date('2020-01-01');
+        withMockedDate(addedMailDateTime, () => {
+          sut.addMail(personalizationSubjectMail);
+          sut.addMail(bothSubjectsMail);
+        });
+
+        expect(sut.getMails({subject: '%account%'})).toStrictEqual(
+          [{...personalizationSubjectMail, datetime: addedMailDateTime}]
+        );
+        expect(sut.getMails({subject: 'outer subject'})).toStrictEqual(
+          [{...bothSubjectsMail, datetime: addedMailDateTime}]
+        );
+        // the top-level subject wins, so the personalization one is not searched
+        expect(sut.getMails({subject: 'inner subject'})).toStrictEqual([]);
+      });
+
       test('filter mails sent after a given point in time', () => {
 
         const sut = new MailHandler();
