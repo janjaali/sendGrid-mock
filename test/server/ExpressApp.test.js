@@ -368,7 +368,51 @@ describe('App', () => {
     });
   });
 
-  describe('GET /api/mails', () => {
+  describe('GET /v3/templates/:templateId', () => {
+
+  const setupApp = (templateHandler) => setupExpressApp(
+    new MailHandler(), {enabled: false}, 'test-api-key', rateLimitConfiguration, templateHandler
+  );
+
+  test('returns a stub template by default', async () => {
+
+    const response = await request(setupApp())
+      .get('/v3/templates/d-123')
+      .set('Authorization', 'Bearer test-api-key');
+
+    expect(response.status).toBe(200);
+    expect(response.headers['x-mock-template-source']).toBe('stub');
+    expect(response.body.id).toBe('d-123');
+    expect(response.body.versions[0].active).toBe(1);
+  });
+
+  test('blocks not authenticated user', async () => {
+
+    const getTemplate = sinon.stub();
+
+    const response = await request(setupApp({getTemplate}))
+      .get('/v3/templates/d-123')
+      .set('Authorization', 'Bearer wrong');
+
+    expect(response.status).toBe(403);
+    expect(getTemplate.called).toBe(false);
+  });
+
+  test('passes status and body from the template handler', async () => {
+
+    const getTemplate = sinon.stub().resolves({status: 404, body: {errors: [{message: 'not found'}]}, source: 'upstream'});
+
+    const response = await request(setupApp({getTemplate}))
+      .get('/v3/templates/d-404')
+      .set('Authorization', 'Bearer test-api-key');
+
+    expect(getTemplate.calledWith('d-404')).toBe(true);
+    expect(response.status).toBe(404);
+    expect(response.body).toStrictEqual({errors: [{message: 'not found'}]});
+  });
+});
+
+describe('GET /api/mails', () => {
 
     const testGetMails = (url) => {
       return async (expectedFilterCriteria, expectedPaginationCriteria) => {

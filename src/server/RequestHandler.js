@@ -93,8 +93,9 @@ const jsonSchema = {
  * @param {*} app express app
  * @param {*} apiAuthenticationKey api key for authentication 
  * @param {*} mailHandler  mail handler
+ * @param {*} templateHandler  template handler
  */
-const RequestHandler = (app, apiAuthenticationKey, mailHandler) => {
+const RequestHandler = (app, apiAuthenticationKey, mailHandler, templateHandler) => {
 
   const { validate } = new Validator();
 
@@ -130,6 +131,24 @@ const RequestHandler = (app, apiAuthenticationKey, mailHandler) => {
     }
   );
       
+  app.get('/v3/templates/:templateId', async (req, res) => {
+
+    if (req.headers.authorization !== `Bearer ${apiAuthenticationKey}`) {
+      return res.status(403).send({
+        errors: [{
+          message: 'Failed authentication',
+          field: 'authorization',
+          help: 'check used api-key for authentication',
+        }],
+        id: 'forbidden',
+      });
+    }
+
+    const {status, body, source} = await templateHandler.getTemplate(req.params.templateId);
+
+    res.status(status).header('X-Mock-Template-Source', source).send(body);
+  });
+
   app.get('/api/mails', (req, res) => {
     
     const filterCriteria = {
