@@ -96,7 +96,14 @@ class MailHandler {
 
   #mailRetentionDurationInSeconds = 86400; // one day
 
-  constructor(mailRetentionDuration) {
+  #maxMails = Infinity;
+
+  constructor(mailRetentionDuration, maxMails) {
+
+    const parsedMaxMails = parseInt(maxMails, 10);
+    if (parsedMaxMails > 0) {
+      this.#maxMails = parsedMaxMails;
+    }
 
     if (mailRetentionDuration) {
       this.#mailRetentionDurationInSeconds = parseDurationStringAsSeconds(
@@ -136,7 +143,9 @@ class MailHandler {
     const maxRetentionTime = Date.now() - (this.#mailRetentionDurationInSeconds * 1000);
     this.#mails = this.#mails.filter(mail => {
       return Date.parse(mail.datetime).valueOf() >= maxRetentionTime;
-    });
+    })
+      // Newest mails are first, so the oldest ones are dropped when over the limit.
+      .slice(0, this.#maxMails);
 
     if (process.env.EVENT_DELIVERY_URL) {
       this.sendDeliveryEvents(mail, messageId);

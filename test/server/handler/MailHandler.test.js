@@ -60,6 +60,35 @@ describe('MailHandler', () => {
       expect(addedMails.length).toBe(3);
     });
 
+    describe('limit number of mails', () => {
+
+      test('if configured, only the newest mails are kept', () => {
+
+        const sut = new MailHandler(undefined, '2');
+
+        sut.addMail({...testMail, subject: 'first'});
+        sut.addMail({...testMail, subject: 'second'});
+        sut.addMail({...testMail, subject: 'third'});
+
+        const remainingSubjects = sut.getMails().map(mail => mail.subject);
+
+        expect(remainingSubjects).toStrictEqual(['third', 'second']);
+      });
+
+      test('if not configured or invalid, mails are not limited', () => {
+
+        [undefined, '', '0', '-1', 'abc'].forEach(maxMails => {
+          const sut = new MailHandler(undefined, maxMails);
+
+          for (let i = 0; i < 30; i++) {
+            sut.addMail(testMail);
+          }
+
+          expect(sut.getMails({}, {pageSize: 100}).length).toBe(30);
+        });
+      });
+    });
+
     describe('delete old mails', () => {
 
       test('if not configured, per default after 24 hours', () => {

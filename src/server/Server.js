@@ -21,7 +21,7 @@ const authenticationUsers = (usersString) => {
   return Object.assign(...users);
 };
 
-const mailHandler = new MailHandler(process.env.MAIL_HISTORY_DURATION);
+const mailHandler = new MailHandler(process.env.MAIL_HISTORY_DURATION, process.env.MAX_MAIL_COUNT);
 
 const apiAuthentication = process.env.AUTHENTICATION
   ? { enabled: true, users: authenticationUsers(process.env.AUTHENTICATION) }
