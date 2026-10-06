@@ -21,7 +21,19 @@ const authenticationUsers = (usersString) => {
   return Object.assign(...users);
 };
 
-const mailHandler = new MailHandler(process.env.MAIL_HISTORY_DURATION);
+const mailHandler = new MailHandler(
+  process.env.MAIL_HISTORY_DURATION,
+  process.env.MAX_MAIL_COUNT,
+  process.env.MAIL_STORAGE_PATH,
+);
+
+// Make sure pending mails are written when the container is stopped.
+['SIGTERM', 'SIGINT'].forEach(signal => {
+  process.on(signal, () => {
+    mailHandler.flush();
+    process.exit(0);
+  });
+});
 
 const apiAuthentication = process.env.AUTHENTICATION
   ? { enabled: true, users: authenticationUsers(process.env.AUTHENTICATION) }
