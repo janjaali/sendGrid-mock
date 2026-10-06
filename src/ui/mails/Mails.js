@@ -172,6 +172,9 @@ class Mails extends React.Component {
                   style: { 'whiteSpace': 'unset' },
                   minWidth: 200,
                   accessor: mail => mail.subject
+                    // template mails carry the subject in the personalization
+                    || (mail.personalizations && mail.personalizations[0] && mail.personalizations[0].subject)
+                    || ''
                 },
                 {
                   Header: 'to',

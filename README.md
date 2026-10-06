@@ -16,6 +16,7 @@ SendGrid-Mock serves as a simple server mocking the sendgrid-apis for developmen
     * **Subject**:
       * `GET /api/mails?subject=The subject` (*exact match*)
       * `GET /api/mails?subject=%subject%` (*contains*)
+      * Mails sent with a `template_id` often have no top-level `subject`; for those, the `subject` of the first personalization is used.
     * **Datetime**: `GET /api/mails?dateTimeSince=2020-12-06T10:00:00Z` (
       *[ISO-8601 format](https://en.wikipedia.org/wiki/ISO_8601)*)
 
