@@ -4,6 +4,7 @@ const basicAuth = require('express-basic-auth');
 const { rateLimit } = require('express-rate-limit');
 const { loggerFactory } = require('./logger/log4js');
 const RequestHandler = require('./RequestHandler');
+const TemplateHandler = require('./handler/TemplateHandler');
 
 const logger = loggerFactory('ExpressApp');
 
@@ -12,6 +13,7 @@ const setupExpressApp = (
   apiAuthentication, 
   mockedApiAuthenticationKey, 
   rateLimitConfiguration,
+  templateHandler = new TemplateHandler(),
 ) => {
 
   const app = express();
@@ -36,7 +38,7 @@ const setupExpressApp = (
   }
 
   // Request handler for non-static requests.
-  RequestHandler(app, mockedApiAuthenticationKey, mailHandler);
+  RequestHandler(app, mockedApiAuthenticationKey, mailHandler, templateHandler);
 
   // We configure this middleware after the API request handlers because we want basic auth to only apply to the static content.
   if (apiAuthentication.enabled) {
