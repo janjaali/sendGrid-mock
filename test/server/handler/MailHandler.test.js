@@ -233,6 +233,30 @@ describe('MailHandler', () => {
         );
       });
 
+      test('filter by subject ignores mails without a subject (template mails)', () => {
+
+        const sut = new MailHandler();
+
+        const templateMail = {
+          'personalizations': [{'to': [{'email': 'sonic@hedgehog.com'}]}],
+          'from': {'email': 'from@example.com'},
+          'template_id': 'd-123',
+        };
+
+        const addedMailDateTime = new Date('2020-01-01');
+        withMockedDate(addedMailDateTime, () => {
+          sut.addMail(templateMail);
+          sut.addMail(testMail);
+        });
+
+        expect(sut.getMails({subject: 'important subject'})).toStrictEqual(
+          [{...testMail, datetime: addedMailDateTime}]
+        );
+        expect(sut.getMails({subject: '%important%'})).toStrictEqual(
+          [{...testMail, datetime: addedMailDateTime}]
+        );
+      });
+
       test('filter mails sent after a given point in time', () => {
 
         const sut = new MailHandler();
