@@ -25,6 +25,8 @@ SendGrid-Mock serves as a simple server mocking the sendgrid-apis for developmen
 
 * Get template information `GET /v3/templates/:id` (requires the same `Authorization: Bearer <API_KEY>` header as sending). Senders that look up a template's active version, such as its subject, before sending can use this. See [Templates](#templates).
 
+* List templates `GET /v3/templates` (same `Authorization` header). The `generations`, `page_size` and `page_token` query parameters are passed on; others are ignored. See [Templates](#templates).
+
 ### UI
 
 * Retrieve sent mails and display them
@@ -46,10 +48,10 @@ SendGrid-Mock serves as a simple server mocking the sendgrid-apis for developmen
 
 * By default, all emails older than 24 hours will be deleted. This can be configured using environment variable `MAIL_HISTORY_DURATION` which uses [ISO-8601 Duration format](https://en.wikipedia.org/wiki/ISO_8601#Durations) such as *'PT24H'*.
 
-* <a id="templates"></a>Templates: by default `GET /v3/templates/:id` returns a generic stub with one active version. To return the real templates, set `SENDGRID_TEMPLATE_API_KEY` to a SendGrid API key that is only allowed to read templates (*Template Engine: Read*; it does not need, and should not have, *Mail Send*). Templates are then fetched from SendGrid and returned unchanged:
+* <a id="templates"></a>Templates: by default `GET /v3/templates/:id` returns a generic stub with one active version, and `GET /v3/templates` lists one such stub for each id in `STUB_TEMPLATE_IDS` (comma-separated, e.g. `d-abc,d-def`; empty by default). The stub list only answers requests for dynamic templates (`generations=dynamic`) and never has a next page. To return the real templates, set `SENDGRID_TEMPLATE_API_KEY` to a SendGrid API key that is only allowed to read templates (*Template Engine: Read*; it does not need, and should not have, *Mail Send*). Templates are then fetched from SendGrid and returned unchanged:
   * `SENDGRID_TEMPLATE_BASE_URL`: SendGrid API base URL (default: `https://api.sendgrid.com/v3`)
-  * `TEMPLATE_CACHE_TTL`: how long a fetched template is cached, in [ISO-8601 Duration format](https://en.wikipedia.org/wiki/ISO_8601#Durations) (default: `PT1H`)
-  * If SendGrid cannot be reached (network error or 5xx) the last cached template is returned even if expired, otherwise the stub. Definite answers such as `404` or `401` are passed through. The `X-Mock-Template-Source` response header tells where the answer came from: `upstream`, `cache`, `stale` or `stub`.
+  * `TEMPLATE_CACHE_TTL`: how long a fetched template or template list page is cached, in [ISO-8601 Duration format](https://en.wikipedia.org/wiki/ISO_8601#Durations) (default: `PT1H`)
+  * If SendGrid cannot be reached (network error or 5xx) the last cached template is returned even if expired, otherwise the stub. Definite answers such as `404` or `401` are passed through. The same applies to `GET /v3/templates`, which is cached per page; its `_metadata` page links are rewritten to point at the mock. The `X-Mock-Template-Source` response header tells where the answer came from: `upstream`, `cache`, `stale` or `stub`.
 
 * Event support: Add basic [event](https://www.twilio.com/docs/sendgrid/for-developers/tracking-events/event#events) support by specifying the environment variable `EVENT_DELIVERY_URL`. When set, [delivered](https://www.twilio.com/docs/sendgrid/for-developers/tracking-events/event#delivered) events will be sent to the specified webhook URL when an email is sent.
 

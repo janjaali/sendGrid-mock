@@ -28,6 +28,7 @@ const templateHandler = new TemplateHandler({
   apiKey: process.env.SENDGRID_TEMPLATE_API_KEY,
   baseUrl: process.env.SENDGRID_TEMPLATE_BASE_URL,
   cacheTtl: process.env.TEMPLATE_CACHE_TTL,
+  stubTemplateIds: (process.env.STUB_TEMPLATE_IDS || '').split(',').map(id => id.trim()).filter(Boolean),
 });
 
 const apiAuthentication = process.env.AUTHENTICATION

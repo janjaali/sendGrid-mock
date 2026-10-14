@@ -412,6 +412,50 @@ describe('App', () => {
   });
 });
 
+describe('GET /v3/templates', () => {
+
+  const setupApp = (templateHandler) => setupExpressApp(
+    new MailHandler(), {enabled: false}, 'test-api-key', rateLimitConfiguration, templateHandler
+  );
+
+  test('returns an empty stub list by default', async () => {
+
+    const response = await request(setupApp())
+      .get('/v3/templates?generations=dynamic&page_size=200')
+      .set('Authorization', 'Bearer test-api-key');
+
+    expect(response.status).toBe(200);
+    expect(response.headers['x-mock-template-source']).toBe('stub');
+    expect(response.body).toStrictEqual({result: [], _metadata: {count: 0}});
+  });
+
+  test('blocks not authenticated user', async () => {
+
+    const listTemplates = sinon.stub();
+
+    const response = await request(setupApp({listTemplates}))
+      .get('/v3/templates')
+      .set('Authorization', 'Bearer wrong');
+
+    expect(response.status).toBe(403);
+    expect(listTemplates.called).toBe(false);
+  });
+
+  test('passes the query and the mock url to the template handler', async () => {
+
+    const listTemplates = sinon.stub().resolves({status: 200, body: {result: []}, source: 'upstream'});
+
+    const response = await request(setupApp({listTemplates}))
+      .get('/v3/templates?generations=dynamic&page_size=200')
+      .set('Authorization', 'Bearer test-api-key');
+
+    expect(response.status).toBe(200);
+    const [query, mockBaseUrl] = listTemplates.firstCall.args;
+    expect(query).toMatchObject({generations: 'dynamic', page_size: '200'});
+    expect(mockBaseUrl).toMatch(/^http:\/\/127\.0\.0\.1:\d+\/v3$/);
+  });
+});
+
 describe('GET /api/mails', () => {
 
     const testGetMails = (url) => {

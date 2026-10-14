@@ -124,6 +124,115 @@ describe('TemplateHandler', () => {
     });
   });
 
+  describe('listing templates', () => {
+
+    const upstreamList = {
+      result: [upstreamTemplate],
+      _metadata: {
+        self: 'https://sg.example/v3/templates?page_size=200',
+        next: 'https://sg.example/v3/templates?page_size=200&page_token=abc',
+        count: 2,
+      },
+    };
+
+    test('without an api key lists the stub template ids for dynamic templates, with no next page', async () => {
+
+      const httpClient = {get: jest.fn()};
+      const sut = new TemplateHandler({stubTemplateIds: ['d-1', 'd-2'], httpClient});
+
+      const {status, body, source} = await sut.listTemplates({generations: 'dynamic', page_size: '200'});
+
+      expect(status).toBe(200);
+      expect(source).toBe('stub');
+      expect(body.result.map(template => template.id)).toStrictEqual(['d-1', 'd-2']);
+      expect(body.result[0].versions[0].active).toBe(1);
+      expect(body._metadata).toStrictEqual({count: 2});
+      expect(httpClient.get).not.toHaveBeenCalled();
+    });
+
+    test.each([
+      ['no stub template ids', {generations: 'dynamic'}, []],
+      ['legacy templates', {generations: 'legacy'}, ['d-1']],
+      ['no generations, which SendGrid treats as legacy', {}, ['d-1']],
+    ])('without an api key lists nothing for %s', async (_, query, stubTemplateIds) => {
+
+      const sut = new TemplateHandler({stubTemplateIds, httpClient: {get: jest.fn()}});
+
+      const {body} = await sut.listTemplates(query);
+
+      expect(body).toStrictEqual({result: [], _metadata: {count: 0}});
+    });
+
+    test('with an api key fetches from SendGrid, passing only the SendGrid query parameters', async () => {
+
+      const httpClient = {get: jest.fn(() => respond(200, upstreamList))};
+      const sut = new TemplateHandler({apiKey: 'read-key', baseUrl: 'https://sg.example/v3', httpClient});
+
+      const result = await sut.listTemplates({generations: 'dynamic', page_size: '200', page_token: 'abc', other: 'x'});
+
+      expect(result).toStrictEqual({status: 200, body: upstreamList, source: 'upstream'});
+      const [url, options] = httpClient.get.mock.calls[0];
+      expect(url).toBe('https://sg.example/v3/templates');
+      expect(options.params).toStrictEqual({generations: 'dynamic', page_size: '200', page_token: 'abc'});
+      expect(options.headers.Authorization).toBe('Bearer read-key');
+    });
+
+    test('rewrites page links to the mock', async () => {
+
+      const httpClient = {get: jest.fn(() => respond(200, upstreamList))};
+      const sut = new TemplateHandler({apiKey: 'k', baseUrl: 'https://sg.example/v3', httpClient});
+
+      const {body} = await sut.listTemplates({page_size: '200'}, 'http://mock:3000/v3');
+
+      expect(body._metadata).toStrictEqual({
+        self: 'http://mock:3000/v3/templates?page_size=200',
+        next: 'http://mock:3000/v3/templates?page_size=200&page_token=abc',
+        count: 2,
+      });
+      expect(body.result).toStrictEqual(upstreamList.result);
+    });
+
+    test('caches each page on its own', async () => {
+
+      const httpClient = {get: jest.fn(() => respond(200, upstreamList))};
+      const sut = new TemplateHandler({apiKey: 'k', httpClient});
+
+      await sut.listTemplates({page_size: '200'});
+      expect((await sut.listTemplates({page_size: '200'})).source).toBe('cache');
+      expect((await sut.listTemplates({page_size: '200', page_token: 'abc'})).source).toBe('upstream');
+      expect(httpClient.get).toHaveBeenCalledTimes(2);
+    });
+
+    test('a listing and a template lookup do not share a cache entry', async () => {
+
+      const httpClient = {get: jest.fn(() => respond(200, upstreamList))};
+      const sut = new TemplateHandler({apiKey: 'k', httpClient});
+
+      await sut.listTemplates({});
+
+      expect((await sut.getTemplate('d-123')).source).toBe('upstream');
+    });
+
+    test.each([401, 403, 429])('passes %i through', async (statusCode) => {
+
+      const errorBody = {errors: [{message: 'nope'}]};
+      const sut = new TemplateHandler({apiKey: 'k', httpClient: {get: jest.fn(() => respond(statusCode, errorBody))}});
+
+      expect(await sut.listTemplates({}, 'http://mock:3000/v3')).toStrictEqual({status: statusCode, body: errorBody, source: 'upstream'});
+    });
+
+    test('on a 5xx with nothing cached returns the stub list', async () => {
+
+      const sut = new TemplateHandler({apiKey: 'k', stubTemplateIds: ['d-1'], httpClient: {get: jest.fn(() => respond(503, {}))}});
+
+      const {status, body, source} = await sut.listTemplates({generations: 'dynamic'});
+
+      expect(status).toBe(200);
+      expect(source).toBe('stub');
+      expect(body.result.map(template => template.id)).toStrictEqual(['d-1']);
+    });
+  });
+
   test.each(['../etc/passwd', 'a/b', 'a?b=c', 'a b', ''])('rejects invalid template id "%s"', async (id) => {
 
     const httpClient = {get: jest.fn()};

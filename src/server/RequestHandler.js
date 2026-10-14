@@ -131,6 +131,25 @@ const RequestHandler = (app, apiAuthenticationKey, mailHandler, templateHandler)
     }
   );
       
+  app.get('/v3/templates', async (req, res) => {
+
+    if (req.headers.authorization !== `Bearer ${apiAuthenticationKey}`) {
+      return res.status(403).send({
+        errors: [{
+          message: 'Failed authentication',
+          field: 'authorization',
+          help: 'check used api-key for authentication',
+        }],
+        id: 'forbidden',
+      });
+    }
+
+    const mockBaseUrl = `${req.protocol}://${req.get('host')}/v3`;
+    const {status, body, source} = await templateHandler.listTemplates(req.query, mockBaseUrl);
+
+    res.status(status).header('X-Mock-Template-Source', source).send(body);
+  });
+
   app.get('/v3/templates/:templateId', async (req, res) => {
 
     if (req.headers.authorization !== `Bearer ${apiAuthenticationKey}`) {
