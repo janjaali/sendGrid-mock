@@ -2,7 +2,7 @@
 
 SendGrid-Mock serves as a simple server mocking the sendgrid-apis for development purposes.
 
-![./assets/screenshot_1.8.0.png](./assets/screenshot_1.8.0.png)
+![Screenshot of the sendgrid-mock UI listing sent mails](./assets/screenshot_ui.png)
 
 ## Functionalities
 
@@ -27,8 +27,13 @@ SendGrid-Mock serves as a simple server mocking the sendgrid-apis for developmen
 
 ### UI
 
-* Retrieve sent mails and display them
-* Delete sent mails
+* Browse sent mails (latest 100) with date, sender, to/cc/bcc recipients and subject
+* Filter by subject, recipient and sent-after date. Text filters match anywhere in the value, case-insensitively.
+  Filters are kept in the URL, so a filtered view can be bookmarked or shared,
+  e.g. `http://localhost:3000/?to=alice@example.com&subject=order`
+* View a mail: rendered HTML (in a sandboxed frame, so scripts in the mail never run),
+  plain text, dynamic template data, raw JSON, and attachments
+* Delete all sent mails (asks for confirmation first)
 
 ### Extras
 
