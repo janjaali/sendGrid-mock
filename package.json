@@ -37,7 +37,6 @@
     "log4js": "^6.4.0",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
-    "react-table": "^6.9.0",
     "sanitize-filename": "^1.6.3"
   },
   "devDependencies": {

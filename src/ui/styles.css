@@ -291,6 +291,26 @@ code, pre, .mono {
   width: auto;
 }
 
+.field-inline {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  cursor: pointer;
+}
+
+.checkbox input {
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  accent-color: var(--color-accent);
+}
+
 /* ==========================================================================
    Filters
    ========================================================================== */
@@ -397,9 +417,58 @@ code, pre, .mono {
   white-space: nowrap;
 }
 
+/* Narrow screens: stack each row instead of squeezing columns. The markup
+   carries explicit table roles so the semantics survive display changes. */
 @media (max-width: 39.99rem) {
-  .col-from {
+  .table-stack,
+  .table-stack tbody,
+  .table-stack tr,
+  .table-stack td {
+    display: block;
+  }
+
+  .table-stack thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+  }
+
+  .table-stack tr {
+    position: relative;
+    padding: var(--space-3);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .table-stack tbody tr:last-child {
+    border-bottom: 0;
+  }
+
+  .table-stack td {
+    padding: 0;
+    border: 0;
+  }
+
+  .table-stack .col-from {
     display: none;
+  }
+
+  .table-stack .col-date {
+    font-size: var(--text-xs);
+    padding-right: 4rem;
+  }
+
+  .table-stack .col-subject {
+    min-width: 0;
+    margin-top: var(--space-1);
+  }
+
+  .table-stack .col-action {
+    position: absolute;
+    top: var(--space-3);
+    right: var(--space-3);
+    width: auto;
   }
 }
 
@@ -486,6 +555,18 @@ code, pre, .mono {
   color: var(--color-success);
 }
 
+.banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-danger);
+  border-radius: var(--radius-sm);
+  background: var(--color-danger-surface);
+}
+
 .confirm {
   display: inline-flex;
   flex-wrap: wrap;
@@ -546,7 +627,7 @@ code, pre, .mono {
   .dialog {
     width: calc(100% - var(--space-8) * 2);
     max-width: 56.25rem;
-    height: auto;
+    height: fit-content;
     max-height: calc(100% - var(--space-8) * 2);
     margin: auto;
     border: 1px solid var(--color-border);
@@ -653,6 +734,3 @@ code, pre, .mono {
   border-bottom: 1px solid var(--color-border);
 }
 
-/* Legacy popup (removed once MailViewer replaces PopUp) */
-.modal { position: fixed; z-index: 1; inset: 0; overflow: auto; background: var(--color-backdrop); }
-.modal_content { position: relative; margin: 5vh auto; width: min(60rem, 92%); padding: var(--space-4); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); }
