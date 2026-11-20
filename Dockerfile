@@ -1,4 +1,7 @@
-FROM node:16-alpine as node
+# check=skip=SecretsUsedInArgOrEnv
+# (API_KEY below is the mock's public, documented default, overridable with
+# `docker run -e API_KEY=...`; it is not a real secret.)
+FROM node:16-alpine AS node
 
 # Build stage
 FROM node AS builder
@@ -36,7 +39,7 @@ WORKDIR /usr/src/server
 # Copy package.json and package-lock.json
 COPY package*.json ./
 # Install only production dependencies
-RUN npm i --only=production
+RUN npm i --omit=dev
 # Copy transpiled js from builder stage into the final image
 COPY --from=builder /app/dist ./dist
 # Copy src/server into final image 
