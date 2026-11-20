@@ -2,7 +2,7 @@
 
 SendGrid-Mock serves as a simple server mocking the sendgrid-apis for development purposes.
 
-![./assets/screenshot_1.8.0.png](./assets/screenshot_1.8.0.png)
+![Screenshot of the sendgrid-mock UI listing sent mails](./assets/screenshot_ui.png)
 
 ## Functionalities
 
@@ -27,8 +27,13 @@ SendGrid-Mock serves as a simple server mocking the sendgrid-apis for developmen
 
 ### UI
 
-* Retrieve sent mails and display them
-* Delete sent mails
+* Browse sent mails (latest 100) with date, sender, to/cc/bcc recipients and subject
+* Filter by subject, recipient and sent-after date. Text filters match anywhere in the value, case-insensitively.
+  Filters are kept in the URL, so a filtered view can be bookmarked or shared,
+  e.g. `http://localhost:3000/?to=alice@example.com&subject=order`
+* View a mail: rendered HTML (in a sandboxed frame, so scripts in the mail never run),
+  plain text, dynamic template data, raw JSON, and attachments
+* Delete all sent mails (asks for confirmation first)
 
 ### Extras
 
@@ -78,6 +83,16 @@ docker run -it -p 3000:3000 -e "API_KEY=sendgrid-api-key" -e "CERT_DOMAINNAMES=[
 Setup with `npm ci` and start both server and UI concurrently with `npm run dev`. Per default the server is reachable via <http://localhost:3000> and the UI via <http://localhost:1234>.
 
 Some prepared HTTP calls can be found [here](./http-calls).
+
+To try the UI with a realistic, complex HTML email (responsive table layout, dark mode, Outlook fallbacks, inline `cid:` images, and PDF/iCalendar/CSV attachments), run:
+
+```shell
+npm run demo:email                                          # sends to http://localhost:3000
+npm run demo:email -- --url http://localhost:3100 --count 5 # another port, several mails
+npm run demo:email -- --help                                # all options
+```
+
+The email lives in [scripts/demo-email](./scripts/demo-email). Edit `email.html` and `email.txt` freely; `{{placeholders}}` are filled in by `send.js`, and images and attachments are generated at run time.
 
 The UI can be accessed at <http://localhost:3000>.
 

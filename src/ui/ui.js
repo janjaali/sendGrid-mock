@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import Mails from './mails/Mails';
+import MailsPage from './mails/MailsPage';
 
 ReactDOM.render(
-  <Mails />,
+  <MailsPage />,
   document.getElementById('root')
 );

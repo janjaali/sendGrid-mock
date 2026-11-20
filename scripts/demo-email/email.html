@@ -1,0 +1,393 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="x-apple-disable-message-reformatting" />
+  <meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="supported-color-schemes" content="light dark" />
+  <title>Your order {{orderId}} is on its way</title>
+
+  <!--[if mso]>
+  <noscript>
+    <xml>
+      <o:OfficeDocumentSettings>
+        <o:AllowPNG/>
+        <o:PixelsPerInch>96</o:PixelsPerInch>
+      </o:OfficeDocumentSettings>
+    </xml>
+  </noscript>
+  <style>
+    table, td, div, h1, h2, p { font-family: Arial, Helvetica, sans-serif !important; }
+    .mso-hide { display: none !important; mso-hide: all; }
+  </style>
+  <![endif]-->
+
+  <style type="text/css">
+    /* ---------- Resets ---------- */
+    html, body { margin: 0 !important; padding: 0 !important; height: 100% !important; width: 100% !important; }
+    * { -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; }
+    table, td { mso-table-lspace: 0pt !important; mso-table-rspace: 0pt !important; border-collapse: collapse; }
+    img { -ms-interpolation-mode: bicubic; border: 0; outline: none; text-decoration: none; display: block; }
+    a { text-decoration: none; }
+    a[x-apple-data-detectors], .unstyle-auto-detected-links a {
+      color: inherit !important; text-decoration: none !important; font-size: inherit !important;
+      font-family: inherit !important; font-weight: inherit !important; line-height: inherit !important;
+    }
+    u + #body a { color: inherit; text-decoration: none; font-size: inherit; font-family: inherit; font-weight: inherit; line-height: inherit; }
+    #MessageViewBody a { color: inherit; text-decoration: none; font-size: inherit; font-family: inherit; font-weight: inherit; line-height: inherit; }
+
+    /* ---------- Components ---------- */
+    .btn a:hover { background-color: #115e59 !important; border-color: #115e59 !important; }
+    .link { color: #0f766e; text-decoration: underline; }
+    .step-dot { width: 28px; height: 28px; border-radius: 14px; line-height: 28px; text-align: center; font-size: 14px; font-weight: bold; }
+
+    /* ---------- Responsive ---------- */
+    @media screen and (max-width: 620px) {
+      .container { width: 100% !important; max-width: 100% !important; }
+      .px { padding-left: 20px !important; padding-right: 20px !important; }
+      .stack { display: block !important; width: 100% !important; max-width: 100% !important; }
+      .stack-pad { padding: 0 0 16px 0 !important; }
+      .hero-title { font-size: 28px !important; line-height: 34px !important; }
+      .hero-cell { padding: 40px 20px !important; }
+      .hero-bg { background-image: none !important; }
+      .hide-mobile { display: none !important; max-height: 0 !important; overflow: hidden !important; mso-hide: all !important; }
+      .show-mobile { display: block !important; max-height: none !important; overflow: visible !important; }
+      .item-img { width: 64px !important; height: 64px !important; }
+      .center-mobile { text-align: center !important; }
+      .full-btn a { display: block !important; }
+      .rec-col p { font-size: 12px !important; line-height: 16px !important; }
+    }
+
+    /* ---------- Dark mode (Apple Mail, iOS, Outlook.com via data-ogsc) ---------- */
+    @media (prefers-color-scheme: dark) {
+      .dm-bg { background-color: #0b1514 !important; }
+      .dm-card { background-color: #13201f !important; }
+      .dm-muted-bg { background-color: #1b2b2a !important; }
+      .dm-text { color: #e6f0ef !important; }
+      .dm-muted { color: #9fb5b2 !important; }
+      .dm-border { border-color: #2a3c3a !important; }
+      .link { color: #5eead4 !important; }
+      .dm-positive { color: #4ade80 !important; }
+      .dm-sale { color: #fca5a5 !important; }
+    }
+    [data-ogsc] .dm-bg { background-color: #0b1514 !important; }
+    [data-ogsc] .dm-card { background-color: #13201f !important; }
+    [data-ogsc] .dm-text { color: #e6f0ef !important; }
+    [data-ogsc] .dm-muted { color: #9fb5b2 !important; }
+  </style>
+</head>
+
+<body id="body" class="dm-bg" style="margin:0; padding:0; width:100%; background-color:#eef2f1; word-spacing:normal;">
+
+  <!-- Preheader: shown in the inbox list, hidden in the body. The trailing
+       zero-width characters stop clients pulling body text into the preview. -->
+  <div style="display:none; font-size:1px; line-height:1px; max-height:0; max-width:0; opacity:0; overflow:hidden; mso-hide:all;">
+    Good news, {{firstName}}! Your 3 items left our Bergen warehouse and should arrive {{deliveryDay}}.
+    &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847; &#8199;&#65279;&#847;
+  </div>
+
+  <div role="article" aria-roledescription="email" aria-label="Your order {{orderId}} is on its way" lang="en" style="text-size-adjust:100%; -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="dm-bg" style="background-color:#eef2f1;">
+    <tr>
+      <td align="center" style="padding:24px 12px;">
+
+        <!--[if mso]><table role="presentation" align="center" width="600" cellpadding="0" cellspacing="0" border="0"><tr><td><![endif]-->
+        <table role="presentation" class="container" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px; max-width:600px; margin:0 auto;">
+
+          <!-- ============ Top bar ============ -->
+          <tr>
+            <td class="px" style="padding:0 8px 12px 8px; font-family:Arial, Helvetica, sans-serif; font-size:12px; line-height:18px; color:#5b6b69;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td class="dm-muted" style="color:#5b6b69;">Order {{orderId}} · Shipped</td>
+                  <td align="right" class="dm-muted" style="color:#5b6b69;">
+                    <a href="https://fjordandpine.example/orders/{{orderId}}/email" class="link" style="color:#0f766e; text-decoration:underline;">View in browser</a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- ============ Header ============ -->
+          <tr>
+            <td class="dm-card px" style="background-color:#ffffff; border-radius:12px 12px 0 0; padding:20px 32px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td width="44" valign="middle">
+                    <img src="cid:logo" width="40" height="40" alt="Fjord &amp; Pine" style="width:40px; height:40px; border-radius:9px;" />
+                  </td>
+                  <td valign="middle" class="dm-text" style="font-family:Georgia, 'Times New Roman', serif; font-size:20px; line-height:24px; font-weight:bold; color:#10201f; padding-left:10px;">
+                    Fjord &amp; Pine
+                  </td>
+                  <td align="right" valign="middle" class="hide-mobile" style="font-family:Arial, Helvetica, sans-serif; font-size:13px;">
+                    <a href="https://fjordandpine.example/shop" class="link" style="color:#0f766e;">Shop</a>
+                    &nbsp;&nbsp;·&nbsp;&nbsp;
+                    <a href="https://fjordandpine.example/account" class="link" style="color:#0f766e;">Account</a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- ============ Hero (background image + VML fallback for Outlook) ============ -->
+          <tr>
+            <td class="hero-bg" background="cid:hero" bgcolor="#0f766e" valign="middle" style="background:#0f766e url('cid:hero') center / cover no-repeat;">
+              <!--[if gte mso 9]>
+              <v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:600px;height:300px;">
+                <v:fill type="frame" src="cid:hero" color="#0f766e" />
+                <v:textbox inset="0,0,0,0">
+              <![endif]-->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td class="hero-cell" style="padding:56px 40px; font-family:Arial, Helvetica, sans-serif; color:#ffffff;">
+                    <p style="margin:0 0 8px 0; font-size:13px; line-height:18px; letter-spacing:2px; text-transform:uppercase; color:#ccfbf1;">Shipping update</p>
+                    <h1 class="hero-title" style="margin:0 0 12px 0; font-size:34px; line-height:40px; font-weight:bold; color:#ffffff; max-width:360px;">
+                      Your order is on its way, {{firstName}}!
+                    </h1>
+                    <p style="margin:0 0 28px 0; font-size:16px; line-height:24px; color:#e6fffa; max-width:340px;">
+                      Estimated delivery: <strong style="color:#ffffff;">{{deliveryDay}}, {{deliveryWindow}}</strong>
+                    </p>
+
+                    <!-- Bulletproof button -->
+                    <table role="presentation" cellpadding="0" cellspacing="0" border="0" class="btn full-btn">
+                      <tr>
+                        <td align="center" bgcolor="#ffffff" style="border-radius:8px;">
+                          <!--[if mso]>
+                          <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="https://track.nordpost.example/{{tracking}}" style="height:46px;v-text-anchor:middle;width:200px;" arcsize="18%" stroke="f" fillcolor="#ffffff">
+                            <w:anchorlock/>
+                            <center style="color:#0f766e;font-family:Arial,sans-serif;font-size:16px;font-weight:bold;">Track package</center>
+                          </v:roundrect>
+                          <![endif]-->
+                          <!--[if !mso]><!-->
+                          <a href="https://track.nordpost.example/{{tracking}}" target="_blank" style="display:inline-block; padding:13px 28px; font-family:Arial, Helvetica, sans-serif; font-size:16px; line-height:20px; font-weight:bold; color:#0f766e; background-color:#ffffff; border:1px solid #ffffff; border-radius:8px; text-decoration:none;">Track package&nbsp;&rarr;</a>
+                          <!--<![endif]-->
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+              <!--[if gte mso 9]></v:textbox></v:rect><![endif]-->
+            </td>
+          </tr>
+
+          <!-- ============ Progress tracker ============ -->
+          <tr>
+            <td class="dm-card px" style="background-color:#ffffff; padding:28px 32px 8px 32px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-family:Arial, Helvetica, sans-serif;">
+                <tr>
+                  <td width="25%" align="center" valign="top">
+                    <div class="step-dot" style="width:28px; height:28px; border-radius:14px; line-height:28px; background-color:#0f766e; color:#ffffff; font-size:14px; font-weight:bold;">&#10003;</div>
+                  </td>
+                  <td width="25%" align="center" valign="top">
+                    <div class="step-dot" style="width:28px; height:28px; border-radius:14px; line-height:28px; background-color:#0f766e; color:#ffffff; font-size:14px; font-weight:bold;">&#10003;</div>
+                  </td>
+                  <td width="25%" align="center" valign="top">
+                    <div class="step-dot" style="width:28px; height:28px; border-radius:14px; line-height:28px; background-color:#f59e0b; color:#ffffff; font-size:14px; font-weight:bold;">3</div>
+                  </td>
+                  <td width="25%" align="center" valign="top">
+                    <div class="step-dot dm-muted-bg" style="width:28px; height:28px; border-radius:14px; line-height:28px; background-color:#e2e8e7; color:#5b6b69; font-size:14px; font-weight:bold;">4</div>
+                  </td>
+                </tr>
+                <tr>
+                  <td align="center" class="dm-text" style="padding-top:8px; font-size:13px; line-height:18px; color:#10201f;">Ordered<br /><span class="dm-muted" style="color:#5b6b69;">{{orderedOn}}</span></td>
+                  <td align="center" class="dm-text" style="padding-top:8px; font-size:13px; line-height:18px; color:#10201f;">Packed<br /><span class="dm-muted" style="color:#5b6b69;">{{packedOn}}</span></td>
+                  <td align="center" class="dm-text" style="padding-top:8px; font-size:13px; line-height:18px; color:#10201f; font-weight:bold;">Shipped<br /><span style="color:#b45309; font-weight:normal;">Today</span></td>
+                  <td align="center" class="dm-muted" style="padding-top:8px; font-size:13px; line-height:18px; color:#5b6b69;">Delivered<br /><span>{{deliveryDayShort}}</span></td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- ============ Delivery details (2 columns, stack on mobile) ============ -->
+          <tr>
+            <td class="dm-card px" style="background-color:#ffffff; padding:20px 32px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="dm-muted-bg" style="background-color:#f4f7f6; border-radius:10px;">
+                <tr>
+                  <td class="stack stack-pad" width="50%" valign="top" style="padding:20px; font-family:Arial, Helvetica, sans-serif; font-size:14px; line-height:21px;">
+                    <p class="dm-muted" style="margin:0 0 6px 0; font-size:11px; letter-spacing:1px; text-transform:uppercase; color:#5b6b69;">Shipping to</p>
+                    <p class="dm-text unstyle-auto-detected-links" style="margin:0; color:#10201f;">
+                      {{customerName}}<br />
+                      Strandgaten 18, 3. etg<br />
+                      5013 Bergen<br />
+                      Norway
+                    </p>
+                  </td>
+                  <td class="stack stack-pad" width="50%" valign="top" style="padding:20px; font-family:Arial, Helvetica, sans-serif; font-size:14px; line-height:21px;">
+                    <p class="dm-muted" style="margin:0 0 6px 0; font-size:11px; letter-spacing:1px; text-transform:uppercase; color:#5b6b69;">Carrier</p>
+                    <p class="dm-text" style="margin:0 0 12px 0; color:#10201f;">NordPost Express (signature required)</p>
+                    <p class="dm-muted" style="margin:0 0 6px 0; font-size:11px; letter-spacing:1px; text-transform:uppercase; color:#5b6b69;">Tracking number</p>
+                    <p style="margin:0; font-family:'Courier New', Courier, monospace; font-size:14px;">
+                      <a href="https://track.nordpost.example/{{tracking}}" class="link" style="color:#0f766e; text-decoration:underline;">{{tracking}}</a>
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- ============ Items ============ -->
+          <tr>
+            <td class="dm-card px" style="background-color:#ffffff; padding:8px 32px 0 32px; font-family:Arial, Helvetica, sans-serif;">
+              <h2 class="dm-text" style="margin:0 0 8px 0; font-size:18px; line-height:24px; color:#10201f;">In this shipment</h2>
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td class="dm-border" style="padding:14px 0; border-bottom:1px solid #e2e8e7;" width="84" valign="top">
+                    <img class="item-img" src="cid:product-shoe" width="72" height="72" alt="Trail Runner sneakers in glacier blue" style="width:72px; height:72px; border-radius:8px;" />
+                  </td>
+                  <td class="dm-border" style="padding:14px 12px; border-bottom:1px solid #e2e8e7; font-size:14px; line-height:20px;" valign="top">
+                    <span class="dm-text" style="color:#10201f; font-weight:bold;">Trail Runner Sneakers</span><br />
+                    <span class="dm-muted" style="color:#5b6b69;">Glacier blue · EU 43 · Qty 1</span>
+                  </td>
+                  <td class="dm-border dm-text" style="padding:14px 0; border-bottom:1px solid #e2e8e7; font-size:14px; line-height:20px; color:#10201f; white-space:nowrap;" align="right" valign="top">€129.00</td>
+                </tr>
+                <tr>
+                  <td class="dm-border" style="padding:14px 0; border-bottom:1px solid #e2e8e7;" width="84" valign="top">
+                    <img class="item-img" src="cid:product-tote" width="72" height="72" alt="Waxed canvas tote in amber" style="width:72px; height:72px; border-radius:8px;" />
+                  </td>
+                  <td class="dm-border" style="padding:14px 12px; border-bottom:1px solid #e2e8e7; font-size:14px; line-height:20px;" valign="top">
+                    <span class="dm-text" style="color:#10201f; font-weight:bold;">Waxed Canvas Tote</span><br />
+                    <span class="dm-muted" style="color:#5b6b69;">Amber · 18 L · Qty 1</span>
+                  </td>
+                  <td class="dm-border dm-text" style="padding:14px 0; border-bottom:1px solid #e2e8e7; font-size:14px; line-height:20px; color:#10201f; white-space:nowrap;" align="right" valign="top">€79.00</td>
+                </tr>
+                <tr>
+                  <td class="dm-border" style="padding:14px 0; border-bottom:1px solid #e2e8e7;" width="84" valign="top">
+                    <img class="item-img" src="cid:product-mug" width="72" height="72" alt="Stoneware mug in violet" style="width:72px; height:72px; border-radius:8px;" />
+                  </td>
+                  <td class="dm-border" style="padding:14px 12px; border-bottom:1px solid #e2e8e7; font-size:14px; line-height:20px;" valign="top">
+                    <span class="dm-text" style="color:#10201f; font-weight:bold;">Stoneware Mug</span><br />
+                    <span class="dm-muted" style="color:#5b6b69;">Violet glaze · 350 ml · Qty 2 × €18.50</span>
+                  </td>
+                  <td class="dm-border dm-text" style="padding:14px 0; border-bottom:1px solid #e2e8e7; font-size:14px; line-height:20px; color:#10201f; white-space:nowrap;" align="right" valign="top">€37.00</td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- ============ Totals ============ -->
+          <tr>
+            <td class="dm-card px" style="background-color:#ffffff; padding:12px 32px 24px 32px; font-family:Arial, Helvetica, sans-serif; font-size:14px; line-height:22px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td class="hide-mobile" width="45%">&nbsp;</td>
+                  <td>
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                      <tr><td class="dm-muted" style="color:#5b6b69;">Subtotal</td><td class="dm-text" align="right" style="color:#10201f;">€245.00</td></tr>
+                      <tr><td class="dm-muted" style="color:#5b6b69;">Shipping (Express)</td><td class="dm-text" align="right" style="color:#10201f;">€4.95</td></tr>
+                      <tr><td class="dm-positive" style="color:#15803d;">Discount <span style="font-family:'Courier New', monospace;">WELCOME10</span></td><td class="dm-positive" align="right" style="color:#15803d;">&minus;€24.50</td></tr>
+                      <tr><td class="dm-muted" style="color:#5b6b69; font-size:12px;">incl. VAT 21%</td><td class="dm-muted" align="right" style="color:#5b6b69; font-size:12px;">€39.13</td></tr>
+                      <tr>
+                        <td class="dm-text dm-border" style="padding-top:10px; border-top:2px solid #10201f; color:#10201f; font-size:16px; font-weight:bold;">Total paid</td>
+                        <td class="dm-text dm-border" align="right" style="padding-top:10px; border-top:2px solid #10201f; color:#10201f; font-size:16px; font-weight:bold;">€225.45</td>
+                      </tr>
+                      <tr><td colspan="2" class="dm-muted" style="padding-top:4px; color:#5b6b69; font-size:12px;">Visa ending in 4242 · Invoice {{invoiceNumber}} attached (PDF)</td></tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- ============ Coupon ============ -->
+          <tr>
+            <td class="dm-card px" style="background-color:#ffffff; padding:0 32px 28px 32px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:2px dashed #f59e0b; border-radius:10px; background-color:#fffbeb;">
+                <tr>
+                  <td class="center-mobile" style="padding:18px 20px; font-family:Arial, Helvetica, sans-serif; font-size:14px; line-height:21px; color:#78350f;">
+                    <strong style="font-size:16px;">15% off your next order</strong><br />
+                    Use code <span style="font-family:'Courier New', monospace; font-size:16px; font-weight:bold; letter-spacing:2px; background-color:#fde68a; padding:2px 6px; border-radius:4px;">PINE15</span> before {{couponExpiry}}.
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- ============ Recommendations: 3 columns -> 1 on mobile ============ -->
+          <tr>
+            <td class="dm-card px" style="background-color:#ffffff; padding:0 32px 12px 32px; font-family:Arial, Helvetica, sans-serif;">
+              <h2 class="dm-text" style="margin:0 0 14px 0; font-size:18px; line-height:24px; color:#10201f;">Pairs well with your order</h2>
+              <!--[if mso]><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td width="33%" valign="top"><![endif]-->
+              <div class="rec-col" style="display:inline-block; width:32%; max-width:176px; vertical-align:top;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding:0 8px 16px 0;">
+                  <a href="https://fjordandpine.example/p/merino-socks"><img src="cid:product-shoe" width="168" alt="Merino trail socks" style="width:100%; max-width:168px; height:auto; border-radius:8px;" /></a>
+                  <p class="dm-text" style="margin:8px 0 0 0; font-size:14px; line-height:20px; color:#10201f; font-weight:bold;">Merino Trail Socks</p>
+                  <p class="dm-muted" style="margin:0; font-size:13px; color:#5b6b69;">€19.00 · 3-pack</p>
+                </td></tr></table>
+              </div>
+              <!--[if mso]></td><td width="33%" valign="top"><![endif]-->
+              <div class="rec-col" style="display:inline-block; width:32%; max-width:176px; vertical-align:top;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding:0 8px 16px 0;">
+                  <a href="https://fjordandpine.example/p/canvas-wax"><img src="cid:product-tote" width="168" alt="Canvas re-waxing kit" style="width:100%; max-width:168px; height:auto; border-radius:8px;" /></a>
+                  <p class="dm-text" style="margin:8px 0 0 0; font-size:14px; line-height:20px; color:#10201f; font-weight:bold;">Canvas Re-wax Kit</p>
+                  <p class="dm-muted" style="margin:0; font-size:13px; color:#5b6b69;">€14.50</p>
+                </td></tr></table>
+              </div>
+              <!--[if mso]></td><td width="33%" valign="top"><![endif]-->
+              <div class="rec-col" style="display:inline-block; width:32%; max-width:176px; vertical-align:top;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding:0 0 16px 0;">
+                  <a href="https://fjordandpine.example/p/pour-over"><img src="cid:product-mug" width="168" alt="Ceramic pour-over set" style="width:100%; max-width:168px; height:auto; border-radius:8px;" /></a>
+                  <p class="dm-text" style="margin:8px 0 0 0; font-size:14px; line-height:20px; color:#10201f; font-weight:bold;">Pour-over Set</p>
+                  <p class="dm-muted" style="margin:0; font-size:13px; color:#5b6b69;"><s>€42.00</s> <span class="dm-sale" style="color:#b91c1c;">€34.00</span></p>
+                </td></tr></table>
+              </div>
+              <!--[if mso]></td></tr></table><![endif]-->
+            </td>
+          </tr>
+
+          <!-- ============ Help ============ -->
+          <tr>
+            <td class="dm-card px" style="background-color:#ffffff; border-radius:0 0 12px 12px; padding:8px 32px 32px 32px; font-family:Arial, Helvetica, sans-serif; font-size:14px; line-height:22px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="dm-border" style="border-top:1px solid #e2e8e7;">
+                <tr>
+                  <td class="dm-text" style="padding-top:20px; color:#10201f;">
+                    <strong>Need help?</strong><br />
+                    <a href="https://fjordandpine.example/help/delivery" class="link" style="color:#0f766e; text-decoration:underline;">Change delivery</a> ·
+                    <a href="https://fjordandpine.example/help/returns" class="link" style="color:#0f766e; text-decoration:underline;">Returns (60 days, free)</a> ·
+                    <a href="mailto:help@fjordandpine.example?subject=Order%20{{orderId}}" class="link" style="color:#0f766e; text-decoration:underline;">Email us</a>
+                    <br /><br />
+                    <span class="dm-muted" style="color:#5b6b69;">A calendar invite for the delivery window and a CSV of your order are attached.</span>
+                    <br />
+                    <span class="dm-muted" style="color:#5b6b69;">Hilsen fra Bergen — Grüße · Salutations · 你好 · 🚚📦🌲</span>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- ============ Footer ============ -->
+          <tr>
+            <td class="px" align="center" style="padding:24px 32px; font-family:Arial, Helvetica, sans-serif; font-size:12px; line-height:18px; color:#5b6b69;">
+              <p style="margin:0 0 10px 0;">
+                <a href="https://instagram.example/fjordandpine" class="link" style="color:#0f766e;">Instagram</a> &nbsp;·&nbsp;
+                <a href="https://pinterest.example/fjordandpine" class="link" style="color:#0f766e;">Pinterest</a> &nbsp;·&nbsp;
+                <a href="https://fjordandpine.example/journal" class="link" style="color:#0f766e;">Journal</a>
+              </p>
+              <p class="dm-muted" style="margin:0 0 10px 0; color:#5b6b69;">
+                You're receiving this transactional email because you placed order {{orderId}} with
+                {{customerEmail}}.
+              </p>
+              <p class="dm-muted" style="margin:0 0 10px 0; color:#5b6b69;">
+                <a href="https://fjordandpine.example/preferences?u={{customerId}}" class="link" style="color:#0f766e; text-decoration:underline;">Email preferences</a> ·
+                <a href="https://fjordandpine.example/unsubscribe?u={{customerId}}&amp;list=marketing" class="link" style="color:#0f766e; text-decoration:underline;">Unsubscribe from offers</a> ·
+                <a href="https://fjordandpine.example/privacy" class="link" style="color:#0f766e; text-decoration:underline;">Privacy</a>
+              </p>
+              <p class="dm-muted unstyle-auto-detected-links" style="margin:0; color:#8a9b98;">
+                Fjord &amp; Pine Outfitters AS · Bryggen 4 · 5003 Bergen · Norway<br />
+                Demo content generated for sendgrid-mock. Fjord &amp; Pine is fictional.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+        <!--[if mso]></td></tr></table><![endif]-->
+
+      </td>
+    </tr>
+  </table>
+  </div>
+</body>
+</html>

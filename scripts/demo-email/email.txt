@@ -1,0 +1,57 @@
+FJORD & PINE
+Order {{orderId}} · Shipped
+
+Your order is on its way, {{firstName}}!
+Estimated delivery: {{deliveryDay}}, {{deliveryWindow}}
+
+Track package: https://track.nordpost.example/{{tracking}}
+
+PROGRESS
+[x] Ordered    {{orderedOn}}
+[x] Packed     {{packedOn}}
+[>] Shipped    Today
+[ ] Delivered  {{deliveryDayShort}}
+
+SHIPPING TO
+{{customerName}}
+Strandgaten 18, 3. etg
+5013 Bergen
+Norway
+
+Carrier:          NordPost Express (signature required)
+Tracking number:  {{tracking}}
+
+IN THIS SHIPMENT
+- Trail Runner Sneakers   Glacier blue · EU 43 · Qty 1        €129.00
+- Waxed Canvas Tote       Amber · 18 L · Qty 1                 €79.00
+- Stoneware Mug           Violet glaze · 350 ml · Qty 2         €37.00
+
+Subtotal                                                       €245.00
+Shipping (Express)                                               €4.95
+Discount WELCOME10                                             -€24.50
+incl. VAT 21%                                                   €39.13
+----------------------------------------------------------------------
+TOTAL PAID                                                     €225.45
+
+Visa ending in 4242 · Invoice {{invoiceNumber}} attached (PDF)
+
+15% OFF YOUR NEXT ORDER
+Use code PINE15 before {{couponExpiry}}.
+
+NEED HELP?
+Change delivery:  https://fjordandpine.example/help/delivery
+Returns:          https://fjordandpine.example/help/returns (60 days, free)
+Email us:         help@fjordandpine.example
+
+A calendar invite for the delivery window and a CSV of your order are attached.
+
+Hilsen fra Bergen — Grüße · Salutations · 你好 · 🚚📦🌲
+
+--
+You're receiving this transactional email because you placed order {{orderId}}
+with {{customerEmail}}.
+Email preferences: https://fjordandpine.example/preferences?u={{customerId}}
+Unsubscribe from offers: https://fjordandpine.example/unsubscribe?u={{customerId}}&list=marketing
+
+Fjord & Pine Outfitters AS · Bryggen 4 · 5003 Bergen · Norway
+Demo content generated for sendgrid-mock. Fjord & Pine is fictional.

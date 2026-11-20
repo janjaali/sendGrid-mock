@@ -19,7 +19,8 @@
     "server-dev": "cross-env API_KEY=sendgrid-api-key MAIL_HISTORY_DURATION=PT24H node ./src/server/Server.js",
     "ui-dev": "parcel ./src/ui/index.html",
     "dev": "concurrently \"npm run server-dev\" \"npm run ui-dev\"",
-    "build": "parcel build ./src/ui/index.html"
+    "build": "parcel build ./src/ui/index.html",
+    "demo:email": "node scripts/demo-email/send.js"
   },
   "author": "janjaali",
   "repository": {
@@ -35,9 +36,8 @@
     "express-json-validator-middleware": "^3.0.1",
     "express-rate-limit": "^6.7.0",
     "log4js": "^6.4.0",
-    "react": "^16.7.0",
-    "react-dom": "^16.7.0",
-    "react-table": "^6.9.0",
+    "react": "^16.14.0",
+    "react-dom": "^16.14.0",
     "sanitize-filename": "^1.6.3"
   },
   "devDependencies": {
