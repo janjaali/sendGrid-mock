@@ -11,6 +11,7 @@ class Mails extends React.Component {
     this.state = {
       mails: [],
       currentEmail: null,
+      type: null,
       subject: queryParams.get('subject') || '',
       to: queryParams.get('to') || '',
       dateTimeSince: queryParams.get('dateTimeSince') || '',
@@ -49,22 +50,18 @@ class Mails extends React.Component {
   }
 
   _filterEmailTo(event) {
-    this.state.to = event.target.value;
-    this.forceUpdate();
-    this._fetchMails();
+    this.setState({ to: event.target.value }, this._fetchMails);
   }
 
   _filterEmailSubject(event) {
-    this.state.subject = event.target.value;
-    this.forceUpdate();
-    this._fetchMails();
+    this.setState({ subject: event.target.value }, this._fetchMails);
   }
 
   _fetchMails() {
     const apiParams = new URLSearchParams('page=1&pageSize=100');
     const uiParams = new URLSearchParams(location.search);
 
-    uiParams.forEach((key, value) => apiParams.set(key, value));
+    uiParams.forEach((value, key) => apiParams.set(key, value));
 
     if (this.state.to.length > 3) {
       apiParams.set('to', `%${this.state.to}%`);
@@ -105,15 +102,11 @@ class Mails extends React.Component {
 
   render() {
     const setCurrentEmail = (email, type) => {
-      this.state.currentEmail = email;
-      this.state.type = type;
-      this.forceUpdate();
+      this.setState({ currentEmail: email, type });
     };
 
     const hide = () => {
-      this.state.currentEmail = null;
-      this.state.type = null;
-      this.forceUpdate();
+      this.setState({ currentEmail: null, type: null });
     };
 
     const data = this.state.mails;
