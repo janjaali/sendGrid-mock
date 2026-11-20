@@ -84,6 +84,16 @@ Setup with `npm ci` and start both server and UI concurrently with `npm run dev`
 
 Some prepared HTTP calls can be found [here](./http-calls).
 
+To try the UI with a realistic, complex HTML email (responsive table layout, dark mode, Outlook fallbacks, inline `cid:` images, and PDF/iCalendar/CSV attachments), run:
+
+```shell
+npm run demo:email                                          # sends to http://localhost:3000
+npm run demo:email -- --url http://localhost:3100 --count 5 # another port, several mails
+npm run demo:email -- --help                                # all options
+```
+
+The email lives in [scripts/demo-email](./scripts/demo-email). Edit `email.html` and `email.txt` freely; `{{placeholders}}` are filled in by `send.js`, and images and attachments are generated at run time.
+
 The UI can be accessed at <http://localhost:3000>.
 
 ### Build
